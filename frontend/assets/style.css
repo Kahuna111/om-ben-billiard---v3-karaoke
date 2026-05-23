@@ -1023,3 +1023,47 @@ nav a.nav-booking.active-admin {
     }
 }
 
+/* --- Printer Size Dropdown Selector Styles --- */
+.printer-size-select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: var(--text-light);
+    padding: 0.35rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+    font-family: var(--font-body);
+    line-height: 1;
+    outline: none;
+}
+
+.printer-size-select:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+body.light-mode .printer-size-select {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.15);
+    color: var(--text-dim);
+}
+
+body.light-mode .printer-size-select:hover {
+    background: rgba(0, 0, 0, 0.10);
+    border-color: rgba(0, 0, 0, 0.25);
+    color: var(--text-light);
+}
+
+.printer-size-select option {
+    background-color: #121815;
+    color: #fff;
+}
+
+body.light-mode .printer-size-select option {
+    background-color: #fff;
+    color: #1a1a2e;
+}
+
+

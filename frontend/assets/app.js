@@ -332,6 +332,11 @@ async function deleteData(ep) {
   }
 }
 
+window.changePrinterSize = function(val) {
+  localStorage.setItem("printer_width", val);
+  console.log("[Printer] Width set to:", val);
+};
+
 function renderNavbar(active) {
   const role = localStorage.getItem("auth_role");
   const user = localStorage.getItem("auth_user") || "User";
@@ -418,6 +423,12 @@ function renderNavbar(active) {
             <span class="cloud-dot" style="display: inline-block; width: 5px; height: 5px; background: #2ecc71; border-radius: 50%; animation: navCloudPulse 2s infinite;"></span>
             <span>☁️ <span class="cloud-text">Tersimpan Otomatis</span></span>
         </div>
+        
+        <!-- PRINTER SIZE SELECTOR -->
+        <select id="select-printer-size" onchange="changePrinterSize(this.value)" class="printer-size-select" title="Pilih Ukuran Kertas Struk Thermal">
+            <option value="58mm" ${localStorage.getItem("printer_width") !== "80mm" ? "selected" : ""}>📏 58mm</option>
+            <option value="80mm" ${localStorage.getItem("printer_width") === "80mm" ? "selected" : ""}>📏 80mm</option>
+        </select>
         
         <!-- DIRECT BLUETOOTH PRINTER BUTTON -->
         <button id="btn-connect-bluetooth" onclick="connectBluetoothPrinter()" class="${window.bleCharacteristic ? 'connected' : 'disconnected'}" title="${window.bleCharacteristic ? 'Printer Terkoneksi' : 'Konek Printer'}">
@@ -558,6 +569,15 @@ async function printDirectBluetooth(data) {
     const encoder = new TextEncoder();
     let esc = [];
 
+    // Retrieve selected paper size
+    const paperSize = localStorage.getItem("printer_width") || "58mm";
+    const is80 = paperSize === "80mm";
+    const maxChars = is80 ? 48 : 32;
+    const divider = "-".repeat(maxChars) + "\n";
+    const leftPad = is80 ? 32 : 18;
+    const rightPad = is80 ? 15 : 13;
+    const labelPad = is80 ? 15 : 10;
+
     // 1. Initialize printer
     esc.push(0x1b, 0x40);
 
@@ -578,27 +598,31 @@ async function printDirectBluetooth(data) {
       ...encoder.encode(cleanPrintText(`${now.toLocaleString("id-ID")}\n`)),
     );
     esc.push(
-      ...encoder.encode(cleanPrintText("--------------------------------\n")),
+      ...encoder.encode(cleanPrintText(divider)),
     );
 
     // 3. Align Left
     esc.push(0x1b, 0x61, 0);
+    
+    const kasirVal = (localStorage.getItem("auth_user") || "Kasir");
     esc.push(
       ...encoder.encode(
         cleanPrintText(
-          `Kasir:      ${(localStorage.getItem("auth_user") || "Kasir").padEnd(16)}\n`,
+          `Kasir:`.padEnd(labelPad) + kasirVal.padStart(maxChars - labelPad) + "\n",
+        ),
+      ),
+    );
+    
+    const custVal = (data.customerName || "Customer");
+    esc.push(
+      ...encoder.encode(
+        cleanPrintText(
+          `Pelanggan:`.padEnd(labelPad) + custVal.padStart(maxChars - labelPad) + "\n",
         ),
       ),
     );
     esc.push(
-      ...encoder.encode(
-        cleanPrintText(
-          `Pelanggan:  ${(data.customerName || "Customer").padEnd(16)}\n`,
-        ),
-      ),
-    );
-    esc.push(
-      ...encoder.encode(cleanPrintText("--------------------------------\n")),
+      ...encoder.encode(cleanPrintText(divider)),
     );
 
     // 4. Print Items
@@ -608,31 +632,31 @@ async function printDirectBluetooth(data) {
       const priceText = formatRupiah(data.tableAmount || data.amount);
       esc.push(
         ...encoder.encode(
-          cleanPrintText(`${durText.padEnd(18)} ${priceText.padStart(13)}\n`),
+          cleanPrintText(`${durText.padEnd(leftPad)} ${priceText.padStart(rightPad)}\n`),
         ),
       );
 
       if (data.orders && data.orders.length > 0) {
         esc.push(
           ...encoder.encode(
-            cleanPrintText("- - - - - - - - - - - - - - - - \n"),
+            cleanPrintText("- ".repeat(maxChars / 2) + "\n"),
           ),
         );
         data.orders.forEach((o) => {
           const nameQty = `${o.name} x${o.qty}`;
           const subtotal = formatRupiah(o.subtotal);
-          if (nameQty.length > 18) {
+          if (nameQty.length > leftPad) {
             esc.push(...encoder.encode(cleanPrintText(`${nameQty}\n`)));
             esc.push(
               ...encoder.encode(
-                cleanPrintText(`${"".padEnd(18)} ${subtotal.padStart(13)}\n`),
+                cleanPrintText(`${"".padEnd(leftPad)} ${subtotal.padStart(rightPad)}\n`),
               ),
             );
           } else {
             esc.push(
               ...encoder.encode(
                 cleanPrintText(
-                  `${nameQty.padEnd(18)} ${subtotal.padStart(13)}\n`,
+                  `${nameQty.padEnd(leftPad)} ${subtotal.padStart(rightPad)}\n`,
                 ),
               ),
             );
@@ -643,18 +667,18 @@ async function printDirectBluetooth(data) {
       data.orders.forEach((o) => {
         const nameQty = `${o.name} x${o.qty || o.quantity}`;
         const subtotal = formatRupiah(o.subtotal);
-        if (nameQty.length > 18) {
+        if (nameQty.length > leftPad) {
           esc.push(...encoder.encode(cleanPrintText(`${nameQty}\n`)));
           esc.push(
             ...encoder.encode(
-              cleanPrintText(`${"".padEnd(18)} ${subtotal.padStart(13)}\n`),
+              cleanPrintText(`${"".padEnd(leftPad)} ${subtotal.padStart(rightPad)}\n`),
             ),
           );
         } else {
           esc.push(
             ...encoder.encode(
               cleanPrintText(
-                `${nameQty.padEnd(18)} ${subtotal.padStart(13)}\n`,
+                `${nameQty.padEnd(leftPad)} ${subtotal.padStart(rightPad)}\n`,
               ),
             ),
           );
@@ -663,19 +687,19 @@ async function printDirectBluetooth(data) {
     }
 
     esc.push(
-      ...encoder.encode(cleanPrintText("--------------------------------\n")),
+      ...encoder.encode(cleanPrintText(divider)),
     );
 
     // 5. Total
     esc.push(0x1b, 0x45, 1); // Bold on
     const totVal = formatRupiah(data.amount || data.totalAmount);
     esc.push(
-      ...encoder.encode(cleanPrintText(`TOTAL: ${totVal.padStart(25)}\n`)),
+      ...encoder.encode(cleanPrintText(`TOTAL:`.padEnd(labelPad) + totVal.padStart(maxChars - labelPad) + "\n")),
     );
     esc.push(0x1b, 0x45, 0); // Bold off
 
     esc.push(
-      ...encoder.encode(cleanPrintText("--------------------------------\n")),
+      ...encoder.encode(cleanPrintText(divider)),
     );
 
     // 6. Footer Center
@@ -709,6 +733,9 @@ async function printReceipt(data) {
   }
 
   const now = getSyncedNow();
+  const paperWidth = localStorage.getItem("printer_width") || "58mm";
+  const is80 = paperWidth === "80mm";
+  
   let itemsHtml = "";
 
   if (data.tableName) {
@@ -752,7 +779,7 @@ async function printReceipt(data) {
             <style>
                 @page {
                     margin: 0;
-                    size: 58mm auto;
+                    size: ${is80 ? "80mm auto" : "58mm auto"};
                 }
                 * {
                     box-sizing: border-box;
@@ -761,9 +788,9 @@ async function printReceipt(data) {
                 }
                 body {
                     font-family: 'Courier New', Courier, monospace;
-                    width: 58mm;
-                    padding: 2mm 3mm;
-                    font-size: 11px;
+                    width: ${is80 ? "80mm" : "58mm"};
+                    padding: ${is80 ? "4mm 5mm" : "2mm 3mm"};
+                    font-size: ${is80 ? "13px" : "11px"};
                     line-height: 1.3;
                     color: #000;
                     background: #fff;
@@ -787,13 +814,13 @@ async function printReceipt(data) {
                     font-weight: bold;
                 }
                 .total {
-                    font-size: 13px;
+                    font-size: ${is80 ? "15px" : "13px"};
                     margin-top: 5px;
                     border-top: 1px dashed #000;
                     padding-top: 5px;
                 }
                 .logo-title {
-                    font-size: 14px;
+                    font-size: ${is80 ? "16px" : "14px"};
                     font-weight: bold;
                     letter-spacing: 0.5px;
                 }
