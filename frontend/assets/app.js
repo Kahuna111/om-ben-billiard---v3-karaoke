@@ -760,11 +760,11 @@ async function printReceipt(data) {
   if (!iframe) {
     iframe = document.createElement("iframe");
     iframe.id = "receipt-print-iframe";
-    iframe.style.position = "fixed";
-    iframe.style.right = "0";
-    iframe.style.bottom = "0";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
+    iframe.style.position = "absolute";
+    iframe.style.left = "-9999px";
+    iframe.style.top = "0";
+    iframe.style.width = "300px";
+    iframe.style.height = "300px";
     iframe.style.border = "0";
     document.body.appendChild(iframe);
   }
@@ -852,17 +852,16 @@ async function printReceipt(data) {
                 <p style="font-weight: bold;">Terima Kasih!</p>
                 <p>Selamat Datang Kembali</p>
             </div>
-            
-            <script>
-                window.onload = function() {
-                    window.focus();
-                    window.print();
-                }
-            <\/script>
         </body>
         </html>
     `);
   doc.close();
+
+  // Bulletproof print trigger from parent window after document write
+  setTimeout(() => {
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+  }, 250);
 }
 
 // --- CROSS-TAB ALARM SYSTEM & BROADCAST CHANNEL ---
