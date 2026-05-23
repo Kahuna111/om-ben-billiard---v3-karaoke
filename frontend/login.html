@@ -111,6 +111,7 @@
           if (data.success) {
             localStorage.setItem("auth_role", data.role);
             localStorage.setItem("auth_user", data.username);
+            localStorage.setItem("auth_token", data.token);
             if (data.profilePic)
               localStorage.setItem("auth_profile_pic", data.profilePic);
 

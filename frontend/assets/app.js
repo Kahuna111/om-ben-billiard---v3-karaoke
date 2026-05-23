@@ -32,6 +32,7 @@ if (!sessionStorage.getItem("session_active_flag")) {
     localStorage.removeItem("auth_user");
     localStorage.removeItem("auth_name");
     localStorage.removeItem("auth_profile_pic");
+    localStorage.removeItem("auth_token");
     sessionStorage.setItem("session_active_flag", "true");
   }
 }
@@ -180,17 +181,63 @@ if (
   !window.location.href.includes("attendance.html") &&
   !window.location.href.includes("absen") &&
   !window.location.href.includes("presensi") &&
-  !window.location.href.includes("reservasi.html")
+  !window.location.href.includes("reservasi.html") &&
+  !window.location.href.includes("tv.html")
 ) {
   if (!localStorage.getItem("auth_role")) window.location.href = "login.html";
 }
 
 function logout() {
+  const username = localStorage.getItem("auth_user");
+  if (username) {
+    fetch("/api/logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username }),
+      keepalive: true
+    }).catch(err => console.error("Error calling logout API:", err));
+  }
   localStorage.removeItem("auth_role");
   localStorage.removeItem("auth_user");
   localStorage.removeItem("auth_name");
+  localStorage.removeItem("auth_profile_pic");
+  localStorage.removeItem("auth_token");
   window.location.href = "login.html";
 }
+
+// --- HEARTBEAT SYSTEM TO KEEP SESSION ALIVE & DETECT REMOTE LOGOUTS ---
+(function startSessionHeartbeat() {
+  const username = localStorage.getItem("auth_user");
+  const token = localStorage.getItem("auth_token");
+
+  // Only run if the user is logged in
+  if (username && token) {
+    const sendHeartbeat = async () => {
+      try {
+        const res = await fetch("/api/heartbeat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, token }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (!data.active) {
+            alert("Sesi Anda telah berakhir karena akun ini login di perangkat lain.");
+            logout();
+          }
+        }
+      } catch (err) {
+        console.error("Heartbeat error:", err);
+      }
+    };
+
+    // Run first heartbeat after 2 seconds, then every 5 seconds
+    setTimeout(() => {
+      sendHeartbeat();
+      setInterval(sendHeartbeat, 5000);
+    }, 2000);
+  }
+})();
 
 const formatRupiah = (n) => {
   if (n === undefined || n === null) return "Rp -";
@@ -287,108 +334,103 @@ function renderNavbar(active) {
   const nav = document.querySelector("nav");
   if (!nav) return;
 
-  let html = "<ul>";
+  let linksHtml = "";
   if (role === "admin" || role === "engineer") {
-    html += `
+    linksHtml += `
             <li class="nav-label">ADMIN PANEL:</li>
             <li><a href="admin.html" class="${active === "admin" ? "active-admin" : ""}">🍔 Menu</a></li>
             <li><a href="karaoke-settings.html" class="${active === "karaoke-settings" ? "active-admin" : ""}">🎤 Ruang</a></li>
             <li><a href="rental.html" class="${active === "rental" ? "active-admin" : ""}">🎱 Meja</a></li>
             <li class="nav-divider"></li>
             <li><a href="monitoring.html" class="${active === "monitoring" ? "active-admin" : ""}" style="color:var(--primary-color)">📡 LIVE</a></li>
+            <li><a href="tv.html" target="_blank" class="${active === "tv" ? "active-admin" : ""}" style="color:var(--accent-gold)">📺 TV</a></li>
             <li><a href="cctv.html" class="${active === "cctv" ? "active-admin" : ""}" style="color:var(--primary-color)">📹 CCTV</a></li>
             <li><a href="stock-history.html" class="${active === "stock-history" ? "active-admin" : ""}" style="color:var(--secondary-color)">📦 STOK</a></li>
             <li><a href="finance.html" class="${active === "finance" ? "active-admin" : ""}">📊 LAPORAN</a></li>
             <li><a href="attendance-admin.html" class="${active === "attendance-admin" ? "active-admin" : ""}">👥 STAF</a></li>
             <li><a href="bookings.html" class="nav-booking ${active === "bookings" ? "active-admin" : ""}">📅 BOOKING</a></li>
             <li><a href="db-admin.html" class="${active === "db-admin" ? "active-admin" : ""}" style="color: #00f3ff">💾 BACKUP</a></li>
-            
-            <li class="nav-divider"></li>
-            <li class="nav-label" style="color: var(--accent-gold);">AKSES KASIR:</li>
-            <li><a href="index.html" class="${active === "billiard" ? "active" : ""}">🎱 Billiard</a></li>
-            <li><a href="karaoke.html" class="${active === "karaoke" ? "active" : ""}">🎤 Karaoke</a></li>
-            <li><a href="pos.html" class="${active === "pos" ? "active" : ""}">🍔 Menu Kasir</a></li>
         `;
   } else {
-    html += `
+    linksHtml += `
             <li class="nav-label">KASIR:</li>
             <li><a href="index.html" class="${active === "billiard" ? "active" : ""}">🎱 Billiard</a></li>
             <li><a href="karaoke.html" class="${active === "karaoke" ? "active" : ""}">🎤 Karaoke</a></li>
             <li><a href="pos.html" class="${active === "pos" ? "active" : ""}">🍔 Menu</a></li>
-            <li><a href="bookings.html" class="nav-booking ${active === "bookings" ? "active" : ""}">📅 Booking</a></li>
+            <li><a href="bookings.html" class="nav-booking ${active === "bookings" ? "active-admin" : ""}">📅 Booking</a></li>
+            <li><a href="tv.html" target="_blank" class="${active === "tv" ? "active" : ""}" style="color: var(--accent-gold)">📺 TV Display</a></li>
         `;
   }
 
   const profilePic =
     localStorage.getItem("auth_profile_pic") || "assets/logo.png";
 
-  // Keep engineer role active and transparent for full administrative and cashier dashboard access.
   const isLightNow = document.body.classList.contains("light-mode");
-  html += `
-        <li class="nav-user-section">
-            <style>
-                @keyframes navCloudPulse {
-                    0% { transform: scale(0.9); opacity: 0.6; }
-                    50% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 4px #2ecc71); }
-                    100% { transform: scale(0.9); opacity: 0.6; }
-                }
+  let html = `
+    <ul>
+        ${linksHtml}
+    </ul>
+    
+    <div class="nav-user-section">
+        <style>
+            @keyframes navCloudPulse {
+                0% { transform: scale(0.9); opacity: 0.6; }
+                50% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 4px #2ecc71); }
+                100% { transform: scale(0.9); opacity: 0.6; }
+            }
+            .cloud-indicator {
+                display: flex;
+                align-items: center;
+                gap: 0.35rem;
+                background: rgba(46, 204, 113, 0.08);
+                border: 1.5px solid rgba(46, 204, 113, 0.25);
+                border-radius: 30px;
+                padding: 0.25rem 0.6rem;
+                margin-right: 0.5rem;
+                color: #2ecc71;
+                font-size: 0.65rem;
+                font-weight: bold;
+                font-family: 'Inter', system-ui, sans-serif;
+                letter-spacing: 0.1px;
+                transition: all 0.3s ease;
+            }
+            @media (max-width: 1366px) {
                 .cloud-indicator {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.35rem;
-                    background: rgba(46, 204, 113, 0.08);
-                    border: 1.5px solid rgba(46, 204, 113, 0.25);
-                    border-radius: 30px;
-                    padding: 0.25rem 0.6rem;
-                    margin-right: 0.5rem;
-                    color: #2ecc71;
-                    font-size: 0.65rem;
-                    font-weight: bold;
-                    font-family: 'Inter', system-ui, sans-serif;
-                    letter-spacing: 0.1px;
-                    transition: all 0.3s ease;
+                    padding: 0.25rem 0.45rem;
+                    margin-right: 0.3rem;
+                    gap: 0.2rem;
                 }
-                @media (max-width: 1366px) {
-                    .cloud-indicator {
-                        padding: 0.25rem 0.45rem;
-                        margin-right: 0.3rem;
-                        gap: 0.2rem;
-                    }
-                    .cloud-text {
-                        display: none;
-                    }
+                .cloud-text {
+                    display: none;
                 }
-            </style>
+            }
+        </style>
 
-            <!-- THEME TOGGLE BUTTON -->
-            <button class="theme-toggle-btn" onclick="toggleTheme()" title="Ganti tema terang/gelap" id="theme-toggle-btn">
-                <span class="theme-toggle-icon">${isLightNow ? "☀️" : "🌙"}</span>
-                <span class="theme-toggle-label">${isLightNow ? "Mode Terang" : "Mode Gelap"}</span>
-            </button>
+        <!-- THEME TOGGLE BUTTON -->
+        <button class="theme-toggle-btn" onclick="toggleTheme()" title="Ganti tema terang/gelap" id="theme-toggle-btn">
+            <span class="theme-toggle-icon">${isLightNow ? "☀️" : "🌙"}</span>
+            <span class="theme-toggle-label">${isLightNow ? "Mode Terang" : "Mode Gelap"}</span>
+        </button>
 
-            <div class="cloud-indicator" title="Data terhubung & tersimpan secara otomatis di Database Cloud MongoDB.">
-                <span class="cloud-dot" style="display: inline-block; width: 5px; height: 5px; background: #2ecc71; border-radius: 50%; animation: navCloudPulse 2s infinite;"></span>
-                <span>☁️ <span class="cloud-text">Tersimpan Otomatis</span></span>
-            </div>
-            
-            <!-- DIRECT BLUETOOTH PRINTER BUTTON -->
-            <button id="btn-connect-bluetooth" onclick="connectBluetoothPrinter()" style="display: flex; align-items: center; gap: 0.3rem; 
-                background: ${window.bleCharacteristic ? "rgba(46, 204, 113, 0.15)" : "rgba(231, 76, 60, 0.08)"}; 
-                border: 1.5px solid ${window.bleCharacteristic ? "#2ecc71" : "rgba(231, 76, 60, 0.3)"}; 
-                border-radius: 30px; padding: 0.25rem 0.55rem; margin-right: 0.5rem; 
-                color: ${window.bleCharacteristic ? "#2ecc71" : "#e74c3c"}; 
-                font-size: 0.65rem; font-weight: bold; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">
-                <span>${window.bleCharacteristic ? "🖨️ Printer Konek" : "🔌 Konek Printer"}</span>
-            </button>
-            
-            ${role === "admin" ? `<a href="users-admin.html" class="${active === "users-admin" ? "active-admin" : ""}" style="color: var(--primary-color);">⚙️</a>` : ""}
-            <a href="profile.html" class="profile-link ${active === "profile" ? "active" : ""}">
-                <img src="${profilePic}" class="nav-avatar">
-                <span class="nav-username">${user}</span>
-            </a>
-            <button onclick="logout()" class="logout-btn">🚪</button>
-        </li>
-    </ul>`;
+        <div class="cloud-indicator" title="Data terhubung & tersimpan secara otomatis di Database Cloud MongoDB.">
+            <span class="cloud-dot" style="display: inline-block; width: 5px; height: 5px; background: #2ecc71; border-radius: 50%; animation: navCloudPulse 2s infinite;"></span>
+            <span>☁️ <span class="cloud-text">Tersimpan Otomatis</span></span>
+        </div>
+        
+        <!-- DIRECT BLUETOOTH PRINTER BUTTON -->
+        <button id="btn-connect-bluetooth" onclick="connectBluetoothPrinter()" class="${window.bleCharacteristic ? 'connected' : 'disconnected'}" title="${window.bleCharacteristic ? 'Printer Terkoneksi' : 'Konek Printer'}">
+            <span class="btn-icon">${window.bleCharacteristic ? "🖨️" : "🔌"}</span>
+            <span class="btn-text">${window.bleCharacteristic ? "Printer Konek" : "Konek Printer"}</span>
+        </button>
+        
+        ${role === "admin" ? `<a href="users-admin.html" class="${active === "users-admin" ? "active-admin" : ""}" style="color: var(--primary-color);">⚙️</a>` : ""}
+        <a href="profile.html" class="profile-link ${active === "profile" ? "active" : ""}">
+            <img src="${profilePic}" class="nav-avatar">
+            <span class="nav-username">${user}</span>
+        </a>
+        <button onclick="logout()" class="logout-btn">🚪</button>
+    </div>
+  `;
   nav.innerHTML = html;
 }
 
