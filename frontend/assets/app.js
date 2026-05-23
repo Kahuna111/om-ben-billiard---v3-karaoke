@@ -181,10 +181,14 @@ if (
   !window.location.href.includes("attendance.html") &&
   !window.location.href.includes("absen") &&
   !window.location.href.includes("presensi") &&
-  !window.location.href.includes("reservasi.html") &&
-  !window.location.href.includes("tv.html")
+  !window.location.href.includes("reservasi.html")
 ) {
-  if (!localStorage.getItem("auth_role")) window.location.href = "login.html";
+  const currentRole = localStorage.getItem("auth_role");
+  if (!currentRole) {
+    window.location.href = "login.html";
+  } else if (currentRole === "tv" && !window.location.href.includes("tv.html")) {
+    window.location.href = "tv.html";
+  }
 }
 
 function logout() {

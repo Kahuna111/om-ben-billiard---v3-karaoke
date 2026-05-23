@@ -353,17 +353,11 @@
 
         /* Fullscreen button */
         .tv-controls {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
             display: flex;
-            gap: 0.5rem;
-            z-index: 1000;
-            opacity: 0.3;
-            transition: opacity 0.3s;
-        }
-        .tv-controls:hover {
-            opacity: 1;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            margin-top: auto;
         }
 
         .tv-btn {
@@ -455,12 +449,12 @@
         </div>
     </div>
 
-    <!-- Floating controls -->
+    <!-- Controls at bottom -->
     <div class="tv-controls">
         <button class="tv-btn" onclick="toggleFullscreen()">
             <span>🖥️</span> Fullscreen
         </button>
-        <button class="tv-btn" onclick="window.location.href='index.html'">
+        <button class="tv-btn" id="btn-kasir" onclick="window.location.href='index.html'">
             <span>🚪</span> Kembali ke Kasir
         </button>
     </div>
@@ -500,10 +494,29 @@
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
-                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                    console.log("Error attempting to enable fullscreen:", err);
                 });
             } else {
-                document.exitFullscreen();
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // TV role logic: Change "Kembali ke Kasir" to Logout
+        const roleNow = localStorage.getItem("auth_role");
+        if (roleNow === "tv") {
+            const btnKasir = document.getElementById("btn-kasir");
+            if (btnKasir) {
+                btnKasir.innerHTML = "<span>🚪</span> Keluar (Logout)";
+                btnKasir.onclick = function() {
+                    if(typeof logout === 'function') {
+                        logout();
+                    } else {
+                        localStorage.clear();
+                        window.location.href = 'login.html';
+                    }
+                };
             }
         }
 
