@@ -346,13 +346,13 @@ function renderNavbar(active) {
             <li><a href="karaoke-settings.html" class="${active === "karaoke-settings" ? "active-admin" : ""}">🎤 Ruang</a></li>
             <li><a href="rental.html" class="${active === "rental" ? "active-admin" : ""}">🎱 Meja</a></li>
             <li class="nav-divider"></li>
-            <li><a href="monitoring.html" class="${active === "monitoring" ? "active-admin" : ""}" style="color:var(--primary-color)">📡 LIVE</a></li>
-            <li><a href="cctv.html" class="${active === "cctv" ? "active-admin" : ""}" style="color:var(--primary-color)">📹 CCTV</a></li>
-            <li><a href="stock-history.html" class="${active === "stock-history" ? "active-admin" : ""}" style="color:var(--secondary-color)">📦 STOK</a></li>
+            <li><a href="monitoring.html" class="${active === "monitoring" ? "active-admin" : ""}">📡 LIVE</a></li>
+            <li><a href="cctv.html" class="${active === "cctv" ? "active-admin" : ""}">📹 CCTV</a></li>
+            <li><a href="stock-history.html" class="${active === "stock-history" ? "active-admin" : ""}">📦 STOK</a></li>
             <li><a href="finance.html" class="${active === "finance" ? "active-admin" : ""}">📊 LAPORAN</a></li>
             <li><a href="attendance-admin.html" class="${active === "attendance-admin" ? "active-admin" : ""}">👥 STAF</a></li>
             <li><a href="bookings.html" class="nav-booking ${active === "bookings" ? "active-admin" : ""}">📅 BOOKING</a></li>
-            <li><a href="db-admin.html" class="${active === "db-admin" ? "active-admin" : ""}" style="color: #00f3ff">💾 BACKUP</a></li>
+            <li><a href="db-admin.html" class="${active === "db-admin" ? "active-admin" : ""}">💾 BACKUP</a></li>
         `;
   } else {
     linksHtml += `
