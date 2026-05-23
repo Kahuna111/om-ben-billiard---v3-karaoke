@@ -140,6 +140,9 @@
                         card.style.borderColor = 'rgba(241, 196, 15, 0.2)';
                     }
 
+                    const isLightMode = document.body.classList.contains('light-mode');
+                    const displayTimerColor = isLightMode ? '#000000' : (statusClass === 'available' ? '#ffffff' : statusColor);
+
                     card.innerHTML = `
                         <div class="table-header">
                             <div class="table-info">
@@ -149,7 +152,7 @@
                             </div>
                             <span class="status-badge" style="background: ${statusColor}; color: ${statusClass === 'available' ? '#ffffff' : 'var(--bg-dark)'}; font-weight: 800; font-size: 0.7rem;">${statusLabel}</span>
                         </div>
-                        <div class="timer-display" style="color: ${statusClass === 'available' ? '#ffffff' : statusColor}; font-size: 2.8rem; margin: 1rem 0; font-family: monospace; font-weight: bold; text-align: center;">${timerHtml}</div>
+                        <div class="timer-display" style="color: ${displayTimerColor}; font-size: 2.8rem; margin: 1rem 0; font-family: monospace; font-weight: bold; text-align: center;">${timerHtml}</div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; font-size: 0.85rem; border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 0.8rem;">
                             ${detailsHtml}
                         </div>
@@ -223,6 +226,9 @@
                         card.style.animation = 'pulse-pink-border 2s infinite';
                     }
 
+                    const isLightMode = document.body.classList.contains('light-mode');
+                    const displayTimerColor = isLightMode ? '#000000' : (statusClass === 'available' ? '#ffffff' : statusColor);
+
                     card.innerHTML = `
                         <div class="table-header">
                             <div class="table-info">
@@ -232,7 +238,7 @@
                             </div>
                             <span class="status-badge" style="background: ${statusColor}; color: ${statusClass === 'available' ? '#ffffff' : 'var(--bg-dark)'}; font-weight: 800; font-size: 0.7rem;">${statusLabel}</span>
                         </div>
-                        <div class="timer-display" style="color: ${statusClass === 'available' ? '#ffffff' : statusColor}; font-size: 2.8rem; margin: 1rem 0; font-family: monospace; font-weight: bold; text-align: center;">${timerHtml}</div>
+                        <div class="timer-display" style="color: ${displayTimerColor}; font-size: 2.8rem; margin: 1rem 0; font-family: monospace; font-weight: bold; text-align: center;">${timerHtml}</div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; font-size: 0.85rem; border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 0.8rem;">
                             ${detailsHtml}
                         </div>

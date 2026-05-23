@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Live Display | Om Ben Billiard & V3 Karaoke</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        :root {
+            --tv-bg: #05050a;
+            --tv-card-bg: rgba(13, 13, 25, 0.75);
+            --neon-green: #2ecc71;
+            --neon-green-glow: rgba(46, 204, 113, 0.4);
+            --neon-cyan: #00f3ff;
+            --neon-cyan-glow: rgba(0, 243, 255, 0.4);
+            --neon-pink: #ec008c;
+            --neon-pink-glow: rgba(236, 0, 140, 0.4);
+            --neon-gold: #facc15;
+            --neon-gold-glow: rgba(250, 204, 21, 0.4);
+        }
+
+        body.tv-mode {
+            background-color: var(--tv-bg);
+            color: #ffffff;
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(236, 0, 140, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tv-header {
+            background: rgba(10, 10, 20, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tv-logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .tv-logo {
+            width: 45px;
+            height: 45px;
+            filter: drop-shadow(0 0 8px var(--neon-cyan));
+        }
+
+        .tv-title h1 {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.1;
+            margin: 0;
+            background: linear-gradient(135deg, #ffffff 30%, var(--neon-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tv-title p {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .tv-summary-row {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .tv-summary-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.4rem 1rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .tv-summary-box .count-num {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .tv-summary-box .count-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .tv-clock-area {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-family: monospace;
+        }
+
+        .tv-time {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+            line-height: 1;
+        }
+
+        .tv-date {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        .tv-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            flex: 1;
+            height: calc(100vh - 75px);
+            box-sizing: border-box;
+        }
+
+        .tv-column {
+            display: flex;
+            flex-direction: column;
+            background: rgba(10, 10, 20, 0.4);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 1.2rem;
+            overflow: hidden;
+        }
+
+        .tv-column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .tv-column-title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 0.3rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.1) transparent;
+        }
+
+        .tv-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .tv-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        /* TV Card styles */
+        .tv-card {
+            background: var(--tv-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 145px;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* Hover glows & border animations */
+        .tv-card.tv-available {
+            border-left: 5px solid var(--neon-green);
+        }
+        .tv-card.tv-available:hover {
+            box-shadow: 0 0 15px var(--neon-green-glow);
+            border-color: var(--neon-green);
+        }
+
+        .tv-card.tv-occupied-table {
+            border-left: 5px solid var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.02);
+            animation: pulse-cyan-border 3s infinite;
+        }
+        .tv-card.tv-occupied-room {
+            border-left: 5px solid var(--neon-pink);
+            background: rgba(236, 0, 140, 0.02);
+            animation: pulse-pink-border 3s infinite;
+        }
+
+        .tv-card.tv-booked {
+            border-left: 5px solid var(--neon-gold);
+            background: rgba(250, 204, 21, 0.02);
+            animation: pulse-gold-border 3s infinite;
+        }
+
+        @keyframes pulse-cyan-border {
+            0% { border-color: rgba(0, 243, 255, 0.2); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+            50% { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.25); }
+            100% { border-color: rgba(0, 243, 255, 0.2); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+        }
+
+        @keyframes pulse-pink-border {
+            0% { border-color: rgba(236, 0, 140, 0.2); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+            50% { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(236, 0, 140, 0.25); }
+            100% { border-color: rgba(236, 0, 140, 0.2); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+        }
+
+        @keyframes pulse-gold-border {
+            0% { border-color: rgba(250, 204, 21, 0.2); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+            50% { border-color: var(--neon-gold); box-shadow: 0 0 15px rgba(250, 204, 21, 0.25); }
+            100% { border-color: rgba(250, 204, 21, 0.2); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+        }
+
+        .tv-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .tv-card-name {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tv-card-desc {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 1px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tv-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .tv-badge.badge-available {
+            background: rgba(46, 204, 113, 0.15);
+            color: var(--neon-green);
+        }
+
+        .tv-badge.badge-occupied-table {
+            background: rgba(0, 243, 255, 0.15);
+            color: var(--neon-cyan);
+        }
+
+        .tv-badge.badge-occupied-room {
+            background: rgba(236, 0, 140, 0.15);
+            color: var(--neon-pink);
+        }
+
+        .tv-badge.badge-booked {
+            background: rgba(250, 204, 21, 0.15);
+            color: var(--neon-gold);
+        }
+
+        .tv-card-timer {
+            font-family: monospace;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 0.6rem 0;
+            line-height: 1;
+        }
+
+        .tv-card-timer.timer-available {
+            color: rgba(255, 255, 255, 0.15);
+        }
+
+        .tv-card-timer.timer-occupied-table {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        .tv-card-timer.timer-occupied-room {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px rgba(236, 0, 140, 0.2);
+        }
+
+        .tv-card-timer.timer-booked {
+            color: var(--neon-gold);
+            text-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
+        }
+
+        .tv-card-footer {
+            border-top: 1px dashed rgba(255, 255, 255, 0.05);
+            padding-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+
+        .tv-cust-name {
+            font-weight: 700;
+            max-width: 110px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tv-start-time {
+            color: var(--text-dim);
+            font-size: 0.7rem;
+        }
+
+        /* Fullscreen button */
+        .tv-controls {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 1000;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+        .tv-controls:hover {
+            opacity: 1;
+        }
+
+        .tv-btn {
+            background: rgba(20, 20, 35, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        .tv-btn:hover {
+            background: var(--neon-cyan);
+            color: #000000;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+        }
+
+        @media (max-width: 1024px) {
+            .tv-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+                overflow: visible;
+            }
+            body.tv-mode {
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body class="tv-mode">
+    <div class="tv-header">
+        <div class="tv-logo-area">
+            <img src="assets/logo.png" alt="Logo" class="tv-logo">
+            <div class="tv-title">
+                <h1>OM BEN BILLIARD & V3 KARAOKE</h1>
+                <p>Live TV Status Monitor</p>
+            </div>
+        </div>
+
+        <div class="tv-summary-row">
+            <div class="tv-summary-box">
+                <span class="count-num" id="avail-count" style="color: var(--neon-green);">0</span>
+                <span class="count-label">Meja / Ruang<br>Tersedia</span>
+            </div>
+            <div class="tv-summary-box">
+                <span class="count-num" id="active-count" style="color: var(--neon-cyan);">0</span>
+                <span class="count-label">Sedang<br>Digunakan</span>
+            </div>
+            <div class="tv-summary-box">
+                <span class="count-num" id="booked-count" style="color: var(--neon-gold);">0</span>
+                <span class="count-label">Total<br>Reservasi</span>
+            </div>
+        </div>
+
+        <div class="tv-clock-area">
+            <div class="tv-time" id="tv-clock">00:00:00</div>
+            <div class="tv-date" id="tv-date">Sabtu, 23 Mei 2026</div>
+        </div>
+    </div>
+
+    <div class="tv-layout">
+        <!-- 🎱 BILLIARD TABLES COLUMN -->
+        <div class="tv-column">
+            <div class="tv-column-header">
+                <div class="tv-column-title">🎱 AREA MEJA BILLIARD</div>
+                <div style="font-size: 0.75rem; color: var(--neon-cyan); font-weight: bold;" id="billiard-summary">0 MEJA</div>
+            </div>
+            <div class="tv-grid" id="billiard-grid">
+                <!-- Billiard cards will be rendered here dynamically -->
+            </div>
+        </div>
+
+        <!-- 🎤 KARAOKE ROOMS COLUMN -->
+        <div class="tv-column">
+            <div class="tv-column-header">
+                <div class="tv-column-title">🎤 ROOM KARAOKE V3</div>
+                <div style="font-size: 0.75rem; color: var(--neon-pink); font-weight: bold;" id="karaoke-summary">0 ROOM</div>
+            </div>
+            <div class="tv-grid" id="karaoke-grid">
+                <!-- Karaoke cards will be rendered here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating controls -->
+    <div class="tv-controls">
+        <button class="tv-btn" onclick="toggleFullscreen()">
+            <span>🖥️</span> Fullscreen
+        </button>
+        <button class="tv-btn" onclick="window.location.href='index.html'">
+            <span>🚪</span> Kembali ke Kasir
+        </button>
+    </div>
+
+    <script src="assets/app.js"></script>
+    <script>
+        // Custom time formatting for tv date header
+        function updateTVClock() {
+            const now = (typeof getSyncedNow === 'function') ? getSyncedNow() : new Date();
+            
+            // Format time: HH:MM:SS
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('tv-clock').textContent = `${hours}:${minutes}:${seconds}`;
+
+            // Format date in Indonesian language
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            
+            const dayName = days[now.getDay()];
+            const dateNum = now.getDate();
+            const monthName = months[now.getMonth()];
+            const year = now.getFullYear();
+
+            document.getElementById('tv-date').textContent = `${dayName}, ${dateNum} ${monthName} ${year}`;
+        }
+
+        // Live Clock interval
+        setInterval(updateTVClock, 1000);
+        updateTVClock();
+
+        // Toggle Fullscreen Mode
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Live data fetching and rendering
+        async function fetchTVData() {
+            try {
+                const [sessions, tables, rooms, bookings] = await Promise.all([
+                    fetchData('/sessions'),
+                    fetchData('/tables'),
+                    fetchData('/rooms'),
+                    fetchData('/bookings')
+                ]);
+
+                // Local timezone-safe YYYY-MM-DD
+                const now = (typeof getSyncedNow === 'function') ? getSyncedNow() : new Date();
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                const todayStr = `${yyyy}-${mm}-${dd}`;
+
+                let availCount = 0;
+                let activeCount = 0;
+                let bookedCount = 0;
+
+                // --- 1. RENDER BILLIARD TABLES ---
+                const billiardGrid = document.getElementById('billiard-grid');
+                billiardGrid.innerHTML = '';
+                
+                let billiardAvailable = 0;
+
+                tables.forEach(table => {
+                    const session = sessions.find(s => (s.targetType === 'table' || !s.targetType) && s.tableId == table.id);
+                    const tableBooking = bookings.find(b => b.targetType === 'table' && b.targetId == table.id && b.bookingTime.startsWith(todayStr));
+                    
+                    let cardClass = 'tv-available';
+                    let statusLabel = 'TERSEDIA';
+                    let badgeClass = 'badge-available';
+                    let timerText = 'READY';
+                    let timerClass = 'timer-available';
+                    let customerHtml = '<span style="color: var(--neon-green)">● KOSONG</span>';
+                    let startHtml = 'Ready to play';
+
+                    if (session) {
+                        cardClass = 'tv-occupied-table';
+                        statusLabel = 'PLAYING';
+                        badgeClass = 'badge-occupied-table';
+                        timerClass = 'timer-occupied-table';
+                        activeCount++;
+                        
+                        const timer = session.type === 'duration' 
+                            ? calculateCountdown(session.endTime)
+                            : calculateTimeDiff(session.startTime);
+                        timerText = timer.formatted;
+                        
+                        customerHtml = `<span class="tv-cust-name">👤 ${session.customerName}</span>`;
+                        startHtml = `Mulai: ${formatTime(session.startTime)}`;
+                    } else if (table.status === 'booked' || tableBooking) {
+                        cardClass = 'tv-booked';
+                        statusLabel = 'BOOKED';
+                        badgeClass = 'badge-booked';
+                        timerClass = 'timer-booked';
+                        timerText = 'RESERVED';
+                        bookedCount++;
+
+                        const bookTime = tableBooking ? formatTime(tableBooking.bookingTime) : 'Hari Ini';
+                        const bookCust = tableBooking ? tableBooking.customerName : 'Pelanggan';
+                        customerHtml = `<span class="tv-cust-name">👤 ${bookCust}</span>`;
+                        startHtml = `Jam: ${bookTime}`;
+                    } else {
+                        availCount++;
+                        billiardAvailable++;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = `tv-card ${cardClass}`;
+                    card.innerHTML = `
+                        <div class="tv-card-header">
+                            <div>
+                                <h3 class="tv-card-name">${table.name}</h3>
+                                <div class="tv-card-desc">${table.description || 'Standard Table'}</div>
+                            </div>
+                            <span class="tv-badge ${badgeClass}">${statusLabel}</span>
+                        </div>
+                        <div class="tv-card-timer ${timerClass}">${timerText}</div>
+                        <div class="tv-card-footer">
+                            ${customerHtml}
+                            <span class="tv-start-time">${startHtml}</span>
+                        </div>
+                    `;
+                    billiardGrid.appendChild(card);
+                });
+
+                document.getElementById('billiard-summary').textContent = `${billiardAvailable} / ${tables.length} TERSEDIA`;
+
+                // --- 2. RENDER KARAOKE ROOMS ---
+                const karaokeGrid = document.getElementById('karaoke-grid');
+                karaokeGrid.innerHTML = '';
+
+                let karaokeAvailable = 0;
+
+                rooms.forEach(room => {
+                    const session = sessions.find(s => s.targetType === 'room' && s.tableId == room.id);
+                    const roomBooking = bookings.find(b => b.targetType === 'room' && b.targetId == room.id && b.bookingTime.startsWith(todayStr));
+                    
+                    let cardClass = 'tv-available';
+                    let statusLabel = 'TERSEDIA';
+                    let badgeClass = 'badge-available';
+                    let timerText = 'READY';
+                    let timerClass = 'timer-available';
+                    let customerHtml = '<span style="color: var(--neon-green)">● KOSONG</span>';
+                    let startHtml = 'Ready to sing';
+
+                    if (session) {
+                        cardClass = 'tv-occupied-room';
+                        statusLabel = 'SINGING';
+                        badgeClass = 'badge-occupied-room';
+                        timerClass = 'timer-occupied-room';
+                        activeCount++;
+                        
+                        const timer = session.type === 'duration' 
+                            ? calculateCountdown(session.endTime)
+                            : calculateTimeDiff(session.startTime);
+                        timerText = timer.formatted;
+
+                        customerHtml = `<span class="tv-cust-name">👤 ${session.customerName}</span>`;
+                        startHtml = `Mulai: ${formatTime(session.startTime)}`;
+                    } else if (room.status === 'booked' || roomBooking) {
+                        cardClass = 'tv-booked';
+                        statusLabel = 'BOOKED';
+                        badgeClass = 'badge-booked';
+                        timerClass = 'timer-booked';
+                        timerText = 'RESERVED';
+                        bookedCount++;
+
+                        const bookTime = roomBooking ? formatTime(roomBooking.bookingTime) : 'Hari Ini';
+                        const bookCust = roomBooking ? roomBooking.customerName : 'Pelanggan';
+                        customerHtml = `<span class="tv-cust-name">👤 ${bookCust}</span>`;
+                        startHtml = `Jam: ${bookTime}`;
+                    } else {
+                        availCount++;
+                        karaokeAvailable++;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = `tv-card ${cardClass}`;
+                    card.innerHTML = `
+                        <div class="tv-card-header">
+                            <div>
+                                <h3 class="tv-card-name">Ruang ${room.name}</h3>
+                                <div class="tv-card-desc">${room.description || 'Standard Room'}</div>
+                            </div>
+                            <span class="tv-badge ${badgeClass}">${statusLabel}</span>
+                        </div>
+                        <div class="tv-card-timer ${timerClass}">${timerText}</div>
+                        <div class="tv-card-footer">
+                            ${customerHtml}
+                            <span class="tv-start-time">${startHtml}</span>
+                        </div>
+                    `;
+                    karaokeGrid.appendChild(card);
+                });
+
+                document.getElementById('karaoke-summary').textContent = `${karaokeAvailable} / ${rooms.length} TERSEDIA`;
+
+                // Update summary totals
+                document.getElementById('avail-count').textContent = availCount;
+                document.getElementById('active-count').textContent = activeCount;
+                document.getElementById('booked-count').textContent = bookedCount;
+
+            } catch (err) {
+                console.error("TV Monitor load error:", err);
+            }
+        }
+
+        // Live refresh every 1 second
+        setInterval(fetchTVData, 1000);
+        fetchTVData();
+    </script>
+</body>
+</html>

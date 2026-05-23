@@ -13,6 +13,7 @@
     --glass-border: rgba(255, 255, 255, 0.1);
     --font-heading: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
+    --booking-header-color: #bd93f9;
 }
 
 /* ===== LIGHT MODE THEME ===== */
@@ -27,6 +28,7 @@ body.light-mode {
     --danger: #c0392b;
     --success: #0099cc;
     --glass-border: rgba(0, 0, 0, 0.12);
+    --booking-header-color: #805ad5;
 }
 
 body.light-mode {
@@ -154,21 +156,21 @@ body, body *,
 .theme-toggle-btn {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
     background: rgba(255, 255, 255, 0.06);
     border: 1.5px solid rgba(255, 255, 255, 0.15);
-    border-radius: 30px;
-    padding: 0.28rem 0.65rem;
+    border-radius: 50%;
+    padding: 0;
     cursor: pointer;
-    font-size: 0.7rem;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    color: var(--text-dim);
-    letter-spacing: 0.3px;
-    white-space: nowrap;
+    font-size: 0.9rem;
     transition: all 0.3s ease !important;
     line-height: 1;
-    margin-right: 0.3rem;
+}
+
+.theme-toggle-label {
+    display: none !important;
 }
 
 .theme-toggle-btn:hover {
@@ -199,14 +201,7 @@ body.light-mode .theme-toggle-btn:hover {
     transform: rotate(20deg);
 }
 
-@media (max-width: 1366px) {
-    .theme-toggle-label {
-        display: none;
-    }
-    .theme-toggle-btn {
-        padding: 0.28rem 0.45rem;
-    }
-}
+/* theme-toggle-label is always hidden (icon-only button) */
 
 * {
     margin: 0;
@@ -227,7 +222,7 @@ body {
 
 /* --- Layout --- */
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
 }
@@ -236,7 +231,9 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
 }
 
 .logo-section {
@@ -271,9 +268,20 @@ header {
     margin-top: 5px;
 }
 
+nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+    flex: 1;
+    min-width: 0;
+}
+
 nav ul {
+    width: 100%;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.25rem;
     list-style: none;
     background: rgba(255, 255, 255, 0.03);
@@ -326,16 +334,22 @@ nav a.active {
     margin: 0 1rem;
 }
 
-.nav-label {
-    font-size: 0.65rem;
-    font-weight: 800;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-    margin: 0 0.5rem;
-    padding: 0 0.5rem;
-    border-left: 2px solid var(--glass-border);
-    white-space: nowrap;
-}
+    .nav-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--text-dim);
+        letter-spacing: 1px;
+        margin: 0 0.5rem; /* added spacing */
+        padding: 0 0.5rem;
+        border-left: 2px solid var(--glass-border);
+        white-space: nowrap;
+    }
+    
+    @media (max-width: 768px) {
+        .nav-label {
+            display: none;
+        }
+    }
 
 nav a.active-admin {
     background: var(--accent-gold);
@@ -586,6 +600,7 @@ nav a.active-admin {
     .container { padding: 1rem 0.8rem; }
     
     header {
+        display: flex;
         flex-direction: column;
         align-items: center;
         gap: 1rem;
@@ -603,8 +618,19 @@ nav a.active-admin {
     .logo-section p { font-size: 0.7rem; }
 
     nav {
+        display: block;
         width: 100%;
         margin-top: 0.5rem;
+        order: 3;
+    }
+
+    .nav-user-section {
+        width: 100%;
+        justify-content: center;
+        margin-top: 0.5rem;
+        flex-wrap: wrap;
+        order: 2;
+        gap: 0.5rem;
     }
 
     nav ul {
@@ -616,6 +642,7 @@ nav a.active-admin {
         gap: 0.4rem;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 12px;
+        width: 100%;
     }
     nav ul::-webkit-scrollbar { display: none; }
 
@@ -772,10 +799,9 @@ nav a.active-admin {
 
 /* --- Global Navbar Extras --- */
 .nav-user-section {
-    margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .profile-link {
@@ -783,29 +809,119 @@ nav a.active-admin {
     align-items: center;
     gap: 0.5rem;
     text-decoration: none;
-    color: white;
+    color: var(--text-light);
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.profile-link:hover {
+    color: var(--primary-color);
 }
 
 .nav-avatar {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    border: 1px solid var(--primary-color);
+    border: 1.5px solid var(--primary-color);
     object-fit: cover;
+    box-shadow: 0 0 8px rgba(0, 243, 255, 0.15);
+}
+
+/* Settings Gear Circle Button */
+.nav-user-section a[href="users-admin.html"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.04);
+    text-decoration: none;
+    font-size: 0.85rem;
+    line-height: 1;
+    transition: all 0.3s ease;
+}
+
+.nav-user-section a[href="users-admin.html"]:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+body.light-mode .nav-user-section a[href="users-admin.html"] {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.12);
+}
+
+body.light-mode .nav-user-section a[href="users-admin.html"]:hover {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: var(--primary-color);
+}
+
+/* Bluetooth Printer Button */
+#btn-connect-bluetooth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#btn-connect-bluetooth .btn-text {
+    display: none !important;
+}
+
+#btn-connect-bluetooth.disconnected {
+    background: rgba(231, 76, 60, 0.08);
+    border: 1.5px solid rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+}
+
+body.light-mode #btn-connect-bluetooth.disconnected {
+    background: rgba(231, 76, 60, 0.06);
+    border-color: rgba(231, 76, 60, 0.25);
+    color: #c0392b;
+}
+
+#btn-connect-bluetooth.connected {
+    background: rgba(46, 204, 113, 0.15);
+    border: 1.5px solid #2ecc71;
+    color: #2ecc71;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+}
+
+body.light-mode #btn-connect-bluetooth.connected {
+    background: rgba(46, 204, 113, 0.08);
+    border-color: rgba(46, 204, 113, 0.25);
+    color: #1a7a40;
+    box-shadow: none;
 }
 
 .logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
-    border-radius: 8px;
+    border-radius: 50%;
     cursor: pointer;
-    padding: 0.5rem;
     line-height: 1;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
 }
 
 .logout-btn:hover {
     background: rgba(231, 76, 60, 0.1);
     border-color: var(--danger);
+    transform: scale(1.05);
 }
 
 /* --- Premium Nav Booking Tab --- */
@@ -850,6 +966,54 @@ nav a.nav-booking.active-admin {
     }
     .logo-section h1 {
         font-size: 1.8rem;
+    }
+    .theme-toggle-label {
+        display: none !important;
+    }
+    .theme-toggle-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        padding: 0 !important;
+        justify-content: center;
+        margin-right: 0 !important;
+    }
+    .cloud-indicator {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        padding: 0 !important;
+        justify-content: center;
+        margin-right: 0 !important;
+        position: relative;
+    }
+    .cloud-indicator .cloud-dot {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        margin: 0 !important;
+    }
+    #btn-connect-bluetooth {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        padding: 0 !important;
+        justify-content: center;
+    }
+    #btn-connect-bluetooth .btn-text {
+        display: none !important;
+    }
+    #btn-connect-bluetooth .btn-icon {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .nav-username {
+        display: none !important;
+    }
+    .profile-link {
+        gap: 0 !important;
     }
 }
 

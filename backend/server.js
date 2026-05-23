@@ -14,6 +14,8 @@ app.use(express.static(path.join(__dirname, "..", "frontend")));
 
 const DB_PATH = path.join(__dirname, "data", "db.json");
 
+const activeSessions = new Map();
+
 // --- MONGODB AUTO-SYNC DATABASE SYSTEM ---
 let isMongoConnected = false;
 
@@ -203,6 +205,9 @@ app.get("/absen", (req, res) => {
 app.get("/presensi", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "frontend", "attendance.html"));
 });
+app.get("/tv", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend", "tv.html"));
+});
 
 // --- DIAGNOSTIC DEBUG API ---
 app.get("/api/debug-db", (req, res) => {
@@ -240,11 +245,28 @@ app.post("/api/login", (req, res) => {
       (u) => u.username === username && u.password === password,
     );
     if (user) {
+      // Check if user is already logged in on another device
+      if (activeSessions.has(username)) {
+        const session = activeSessions.get(username);
+        // Heartbeat threshold is 12 seconds
+        if (Date.now() - session.lastSeen < 12000) {
+          return res.status(400).json({
+            success: false,
+            message: "Akun masih login di perangkat lain",
+          });
+        }
+      }
+
+      // Generate a session token
+      const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
+      activeSessions.set(username, { token, lastSeen: Date.now() });
+
       res.json({
         success: true,
         role: user.role,
         username: user.username,
         profilePic: user.profilePic,
+        token: token,
       });
     } else {
       res
@@ -253,6 +275,38 @@ app.post("/api/login", (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ success: false, message: "Server Error" });
+  }
+});
+
+app.post("/api/logout", (req, res) => {
+  try {
+    const { username } = req.body;
+    if (username) {
+      activeSessions.delete(username);
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.post("/api/heartbeat", (req, res) => {
+  try {
+    const { username, token } = req.body;
+    if (!username || !token) {
+      return res.status(400).json({ success: false, active: false });
+    }
+
+    if (activeSessions.has(username)) {
+      const session = activeSessions.get(username);
+      if (session.token === token) {
+        session.lastSeen = Date.now();
+        return res.json({ success: true, active: true });
+      }
+    }
+    res.json({ success: false, active: false });
+  } catch (err) {
+    res.status(500).json({ success: false, active: false });
   }
 });
 
