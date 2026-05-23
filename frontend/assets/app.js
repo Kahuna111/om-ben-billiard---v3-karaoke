@@ -347,7 +347,6 @@ function renderNavbar(active) {
             <li><a href="rental.html" class="${active === "rental" ? "active-admin" : ""}">🎱 Meja</a></li>
             <li class="nav-divider"></li>
             <li><a href="monitoring.html" class="${active === "monitoring" ? "active-admin" : ""}" style="color:var(--primary-color)">📡 LIVE</a></li>
-            <li><a href="tv.html" target="_blank" class="${active === "tv" ? "active-admin" : ""}" style="color:var(--accent-gold)">📺 TV</a></li>
             <li><a href="cctv.html" class="${active === "cctv" ? "active-admin" : ""}" style="color:var(--primary-color)">📹 CCTV</a></li>
             <li><a href="stock-history.html" class="${active === "stock-history" ? "active-admin" : ""}" style="color:var(--secondary-color)">📦 STOK</a></li>
             <li><a href="finance.html" class="${active === "finance" ? "active-admin" : ""}">📊 LAPORAN</a></li>
@@ -362,7 +361,6 @@ function renderNavbar(active) {
             <li><a href="karaoke.html" class="${active === "karaoke" ? "active" : ""}">🎤 Karaoke</a></li>
             <li><a href="pos.html" class="${active === "pos" ? "active" : ""}">🍔 Menu</a></li>
             <li><a href="bookings.html" class="nav-booking ${active === "bookings" ? "active-admin" : ""}">📅 Booking</a></li>
-            <li><a href="tv.html" target="_blank" class="${active === "tv" ? "active" : ""}" style="color: var(--accent-gold)">📺 TV Display</a></li>
         `;
   }
 
