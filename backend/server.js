@@ -1400,6 +1400,36 @@ app.post("/api/bookings", (req, res) => {
 
   const { customerName, targetId, targetType, bookingTime, notes, memberId } = req.body;
 
+  // 1. Validasi apakah unit sedang aktif digunakan / bermain saat ini
+  const activeSession = (db.sessions || []).find(
+    (s) => s.tableId == targetId && s.targetType === targetType
+  );
+  if (activeSession) {
+    return res.status(400).json({
+      success: false,
+      message: "Maaf meja ini sedang bermain untuk sesi saat ini",
+    });
+  }
+
+  // 2. Validasi cooldown 10 menit setelah sesi bermain diselesaikan (tombol selesai di-klik)
+  const recentTransactions = (db.transactions || [])
+    .filter((t) => t.tableId == targetId && t.targetType === targetType)
+    .sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
+
+  if (recentTransactions.length > 0) {
+    const lastTransaction = recentTransactions[0];
+    const timeSinceEndMs = Date.now() - new Date(lastTransaction.endTime);
+    const cooldownMs = 10 * 60 * 1000; // Cooldown 10 menit
+    if (timeSinceEndMs < cooldownMs) {
+      const minutesRemaining = Math.ceil((cooldownMs - timeSinceEndMs) / 60000);
+      const unitName = targetType === "room" ? "Ruangan" : "Meja";
+      return res.status(400).json({
+        success: false,
+        message: `Maaf su! ${unitName} baru saja selesai. Harap tunggu ${minutesRemaining} menit lagi untuk melakukan reservasi.`,
+      });
+    }
+  }
+
   // Check if duplicate booking on same calendar day
   const targetDate = bookingTime ? bookingTime.substring(0, 10) : "";
   if (targetDate) {
