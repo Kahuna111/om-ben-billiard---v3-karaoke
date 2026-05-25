@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // Force redirect from file:// to local server to avoid connection and storage sandbox issues
+        if (window.location.protocol === 'file:') {
+            const fileName = window.location.pathname.split('/').pop() || 'index.html';
+            window.location.href = 'http://localhost:3001/' + fileName;
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Om Ben Billiard</title>
@@ -96,6 +103,14 @@
             <form id="start-form">
                 <input type="hidden" id="modal-table-id">
                 <div class="form-group">
+                    <label>ID Member (Opsional)</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="member-id-input" oninput="onMemberIdInput()" placeholder="Masukkan 8 digit ID Member..." style="flex: 1;" maxlength="20" autocomplete="off">
+                        <button type="button" class="btn btn-outline" id="btn-check-member" onclick="checkMemberStatus()" style="width: auto; padding: 0 1rem; color: var(--accent-gold); border-color: rgba(240, 192, 64, 0.3);">Cek</button>
+                    </div>
+                    <div id="member-feedback" style="font-size: 0.85rem; margin-top: 6px; display: none; font-weight: 600;"></div>
+                </div>
+                <div class="form-group">
                     <label>Nama Penyewa</label>
                     <input type="text" id="customer-name" placeholder="Contoh: Budi" required>
                 </div>
@@ -111,7 +126,7 @@
                 </div>
                 <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                     <button type="button" class="btn btn-outline" id="close-modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Mulai Sekarang</button>
+                    <button type="submit" class="btn btn-primary" id="start-submit-btn">Mulai Sekarang</button>
                 </div>
             </form>
         </div>
@@ -164,6 +179,6 @@
         </div>
     </div>
 
-    <script src="assets/dashboard.js"></script>
+    <script src="assets/dashboard.js?v=1.0.2"></script>
 </body>
 </html>

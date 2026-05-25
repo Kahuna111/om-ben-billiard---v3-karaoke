@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script>
+        // Force redirect from file:// to local server to avoid connection and storage sandbox issues
+        if (window.location.protocol === 'file:') {
+            const fileName = window.location.pathname.split('/').pop() || 'index.html';
+            window.location.href = 'http://localhost:3001/' + fileName;
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Member | Om Ben Billiard</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        /* ===== Additional Premium Styles for Member Dashboard ===== */
+        .member-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 1.25rem 1.5rem;
+            border-radius: 20px;
+        }
+
+        .search-filter-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-wrapper input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .search-wrapper .search-icon {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .filter-select option {
+            background-color: #121815;
+            color: white;
+        }
+
+        .btn-add-member {
+            width: auto !important;
+            padding: 0.75rem 1.5rem !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            border-radius: 12px;
+        }
+
+        /* Member Grid / Table Card layout */
+        .member-table-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 1.5rem;
+            overflow: hidden;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .member-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .member-table th {
+            padding: 1rem;
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .member-table td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .member-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .member-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .member-id-badge {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--primary-color);
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.25);
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: inline-block;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.05);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pill.active {
+            background: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.25);
+        }
+
+        .status-pill.blocked {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.25);
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-action.btn-detail:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.15);
+        }
+
+        .btn-action.btn-edit:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            box-shadow: 0 0 8px rgba(250, 204, 21, 0.15);
+        }
+
+        .btn-action.btn-block:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            box-shadow: 0 0 8px rgba(231, 76, 60, 0.15);
+        }
+
+        .btn-action.btn-unblock:hover {
+            border-color: #2ecc71;
+            color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.15);
+        }
+
+        .btn-action.btn-delete:hover {
+            background: rgba(231, 76, 60, 0.15);
+            border-color: var(--danger);
+            color: var(--danger);
+            box-shadow: 0 0 8px rgba(231, 76, 60, 0.25);
+        }
+
+        /* Premium Digital Member Card Styling */
+        .member-card-wrapper {
+            perspective: 1000px;
+            margin: 1.5rem auto;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .digital-member-card {
+            background: linear-gradient(135deg, rgba(20, 25, 45, 0.95) 0%, rgba(10, 10, 20, 0.98) 100%);
+            border: 2px solid rgba(0, 243, 255, 0.35);
+            border-radius: 20px;
+            padding: 1.75rem;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            color: white;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+        }
+
+        .digital-member-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .card-header-logo {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .card-brand {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #ffffff, var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-type {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--accent-gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid rgba(250, 204, 21, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .card-chip {
+            width: 42px;
+            height: 32px;
+            background: linear-gradient(135deg, #facc15 0%, #ca8a04 100%);
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.5);
+        }
+
+        .card-id-number {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.75rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-holder {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .card-holder-label {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-holder-name {
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #fff;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .card-valid {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.2rem;
+        }
+
+        .card-valid-label {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-valid-date {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        /* Success screen checkmark animation */
+        .success-icon-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-checkmark {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(46, 204, 113, 0.1);
+            border: 2px solid #2ecc71;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: #2ecc71;
+            animation: successPulse 2s infinite;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(46, 204, 113, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+
+        /* Visit History table inside Detail Modal */
+        .visit-history-section {
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 1.25rem;
+        }
+
+        .visit-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .visit-history-table th {
+            padding: 0.6rem 0.5rem;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--glass-border);
+            font-weight: 600;
+        }
+
+        .visit-history-table td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .visit-history-empty {
+            text-align: center;
+            color: var(--text-dim);
+            padding: 2rem 1rem;
+            font-style: italic;
+        }
+
+        /* Detail field style */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .info-item-full {
+            grid-column: span 2;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: white;
+            word-break: break-word;
+        }
+
+        .info-value-highlight {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 700;
+            color: var(--primary-color);
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .block-info-box {
+            background: rgba(231, 76, 60, 0.06);
+            border: 1px solid rgba(231, 76, 60, 0.25);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #eceff1;
+        }
+
+        .block-info-box h4 {
+            color: #e74c3c;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        /* Light Mode Overrides for Specific Member Features */
+        body.light-mode .action-bar,
+        body.light-mode .member-table-card {
+            background: var(--card-bg);
+            border-color: var(--glass-border);
+        }
+
+        body.light-mode .search-wrapper input {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.12);
+            color: black;
+        }
+
+        body.light-mode .search-wrapper input:focus {
+            background: white;
+        }
+
+        body.light-mode .filter-select {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.12);
+            color: black;
+        }
+
+        body.light-mode .filter-select option {
+            background-color: white;
+            color: black;
+        }
+
+        body.light-mode .member-table td {
+            color: #2c3e50;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-mode .member-table tr:hover td {
+            background: rgba(0, 0, 0, 0.01);
+        }
+
+        body.light-mode .digital-member-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 25px rgba(0, 153, 204, 0.15);
+        }
+
+        body.light-mode .info-value {
+            color: #2c3e50;
+        }
+
+        body.light-mode .block-info-box {
+            background: rgba(192, 57, 43, 0.05);
+            border-color: rgba(192, 57, 43, 0.2);
+            color: #2c3e50;
+        }
+
+        /* Custom scrollbar for visit table */
+        .visit-history-scroll {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        /* Responsive styling for small devices */
+        @media (max-width: 768px) {
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-filter-group {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+
+            .search-wrapper {
+                max-width: 100%;
+            }
+
+            .btn-add-member {
+                width: 100% !important;
+                justify-content: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .info-item-full {
+                grid-column: span 1;
+            }
+
+            /* Stack Member Table on Mobile */
+            .member-table, .member-table thead, .member-table tbody, .member-table th, .member-table td, .member-table tr {
+                display: block;
+            }
+
+            .member-table thead {
+                display: none;
+            }
+
+            .member-table tr {
+                border-bottom: 2px solid var(--glass-border);
+                padding: 1rem 0;
+            }
+
+            .member-table tr:last-child {
+                border-bottom: none;
+            }
+
+            .member-table td {
+                border-bottom: none;
+                padding: 0.4rem 0.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: right;
+            }
+
+            .member-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--text-dim);
+                font-size: 0.8rem;
+                text-align: left;
+                text-transform: uppercase;
+            }
+
+            .action-buttons {
+                justify-content: flex-end;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="Logo" class="main-logo">
+                <div>
+                    <h1>OM BEN BILLIARD</h1>
+                    <p>X V3 KARAOKE POS System</p>
+                </div>
+            </div>
+            <nav></nav>
+        </header>
+
+        <script src="assets/app.js"></script>
+        <script>renderNavbar('member');</script>
+
+        <div class="member-container">
+            <!-- Stats overview cards -->
+            <section class="stats-overview">
+                <div class="stat-card">
+                    <h3>Total Member</h3>
+                    <div class="value" id="stats-total">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Member Aktif</h3>
+                    <div class="value" id="stats-active" style="color: #2ecc71;">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Member Terblokir</h3>
+                    <div class="value" id="stats-blocked" style="color: var(--danger);">0</div>
+                </div>
+            </section>
+
+            <!-- Search and Action Bar -->
+            <div class="action-bar no-print">
+                <div class="search-filter-group">
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="search-member-input" placeholder="Cari ID, Nama, No. HP..." oninput="filterMembers()">
+                    </div>
+                    <select id="filter-status-select" class="filter-select" onchange="filterMembers()">
+                        <option value="all">🟢 Semua Status</option>
+                        <option value="active">🟢 Status Aktif</option>
+                        <option value="blocked">🔴 Terblokir / Blacklist</option>
+                    </select>
+                </div>
+                <button onclick="openCreateModal()" class="btn btn-primary btn-add-member">
+                    <span>🪪</span> Buat Member Baru
+                </button>
+                <button onclick="resetAllMembers()" class="btn btn-danger btn-reset-member" style="background: #ef4444; border-color: #ef4444; color: white; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>⚠️</span> Reset Seluruh Member
+                </button>
+            </div>
+
+            <!-- Member List Grid/Table -->
+            <section class="member-table-card">
+                <div class="table-responsive">
+                    <table class="member-table">
+                        <thead>
+                            <tr>
+                                <th>ID Member</th>
+                                <th>Nama Lengkap</th>
+                                <th>No. HP</th>
+                                <th>Daftar Pada</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="member-table-body">
+                            <!-- Injected dynamically -->
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 3rem 1rem;">
+                                    ⌛ Memuat data member...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal: Create Member -->
+    <div class="modal" id="create-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem; font-family: var(--font-heading);">Registrasi Member Baru</h2>
+            <form id="create-member-form" onsubmit="handleCreateMember(event)">
+                <div class="form-group">
+                    <label>Nama Lengkap <span style="color: var(--danger)">*</span></label>
+                    <input type="text" id="create-name" placeholder="Contoh: Budi Santoso" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>No. HP / WhatsApp <span style="color: var(--danger)">*</span></label>
+                    <input type="text" id="create-phone" placeholder="Contoh: 08123456789" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Email (Opsional)</label>
+                    <input type="email" id="create-email" placeholder="Contoh: budi@gmail.com" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Alamat (Opsional)</label>
+                    <input type="text" id="create-address" placeholder="Contoh: Jl. Sudirman No. 12" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Catatan (Opsional)</label>
+                    <input type="text" id="create-notes" placeholder="Catatan tambahan..." autocomplete="off">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('create-modal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Registrasi & Buat ID</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Display Member ID (After Successful Create) -->
+    <div class="modal" id="id-display-modal">
+        <div class="modal-content" style="max-width: 420px; text-align: center;">
+            <div class="success-icon-wrapper">
+                <div class="success-checkmark">✓</div>
+            </div>
+            
+            <h2 style="margin-bottom: 0.5rem; font-family: var(--font-heading); color: #2ecc71;">Member Berhasil Terdaftar!</h2>
+            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Sistem telah menghasilkan nomor ID Member unik berikut.</p>
+            
+            <!-- Virtual Glowing Member Card -->
+            <div class="member-card-wrapper">
+                <div class="digital-member-card" id="virtual-card">
+                    <div class="card-header-logo">
+                        <div class="card-brand">OM BEN BILLIARD</div>
+                        <div class="card-type">VIP Member</div>
+                    </div>
+                    <div class="card-chip"></div>
+                    <div class="card-id-number" id="virtual-card-id">0000 0000</div>
+                    <div class="card-details">
+                        <div class="card-holder">
+                            <span class="card-holder-label">Nama Pemegang</span>
+                            <span class="card-holder-name" id="virtual-card-name">-</span>
+                        </div>
+                        <div class="card-valid">
+                            <span class="card-valid-label">Terdaftar</span>
+                            <span class="card-valid-date" id="virtual-card-date">--/--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem;">
+                <button type="button" class="btn btn-primary" onclick="copyCardId()" style="background: var(--accent-gold); border-color: var(--accent-gold);">
+                    📋 Salin ID Member
+                </button>
+                <button type="button" class="btn btn-outline" onclick="closeModal('id-display-modal')">
+                    Selesai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Detail Member -->
+    <div class="modal" id="detail-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2 style="margin-bottom: 1.5rem; font-family: var(--font-heading); display: flex; justify-content: space-between; align-items: center;">
+                <span>Detail Member</span>
+                <span id="detail-status-badge"></span>
+            </h2>
+
+            <!-- Blacklist / Block Warning Box -->
+            <div id="detail-block-warning" class="block-info-box" style="display: none;">
+                <h4>⚠️ Member Ini Terblokir!</h4>
+                <div style="font-size: 0.85rem; line-height: 1.4;">
+                    <div style="margin-bottom: 0.25rem;"><strong>Alasan:</strong> <span id="detail-block-reason"></span></div>
+                    <div style="margin-bottom: 0.25rem;"><strong>Oleh:</strong> <span id="detail-block-by"></span></div>
+                    <div><strong>Pada:</strong> <span id="detail-block-at"></span></div>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">ID Member</span>
+                    <span class="info-value"><span class="info-value-highlight" id="detail-id"></span></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Potongan Diskon (%)</span>
+                    <span class="info-value" id="detail-discount" style="font-weight: bold; color: var(--accent-gold);">0%</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Nama Lengkap</span>
+                    <span class="info-value" id="detail-name">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">No. HP / WhatsApp</span>
+                    <span class="info-value" id="detail-phone">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value" id="detail-email">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Terdaftar Pada</span>
+                    <span class="info-value" id="detail-created-at">-</span>
+                </div>
+                <div class="info-item-full">
+                    <span class="info-label">Alamat Rumah</span>
+                    <span class="info-value" id="detail-address">-</span>
+                </div>
+                <div class="info-item-full">
+                    <span class="info-label">Catatan Internal</span>
+                    <span class="info-value" id="detail-notes">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Total Kunjungan</span>
+                    <span class="info-value" id="detail-visit-count" style="font-weight: bold;">0 Kali</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Dibuat Oleh</span>
+                    <span class="info-value" id="detail-created-by">-</span>
+                </div>
+            </div>
+
+            <!-- Visit History -->
+            <div class="visit-history-section">
+                <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--text-light); font-family: var(--font-heading);">Riwayat Aktivitas & Kunjungan</h3>
+                <div class="visit-history-scroll">
+                    <table class="visit-history-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left; width: 35%;">Tanggal & Jam</th>
+                                <th style="text-align: left; width: 25%;">Tipe</th>
+                                <th style="text-align: left; width: 40%;">Aktivitas / Transaksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="visit-history-body">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="button" class="btn btn-outline" onclick="copyDetailId()" id="btn-copy-detail" style="color: var(--primary-color); border-color: rgba(0, 243, 255, 0.3);">
+                    📋 Salin ID
+                </button>
+                <button type="button" class="btn btn-primary" onclick="closeModal('detail-modal')">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Member -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem; font-family: var(--font-heading);">Edit Data Member</h2>
+            <form id="edit-member-form" onsubmit="handleEditMember(event)">
+                <input type="hidden" id="edit-id-hidden">
+                <div class="form-group">
+                    <label>Nama Lengkap <span style="color: var(--danger)">*</span></label>
+                    <input type="text" id="edit-name" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>No. HP / WhatsApp <span style="color: var(--danger)">*</span></label>
+                    <input type="text" id="edit-phone" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Email (Opsional)</label>
+                    <input type="email" id="edit-email" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Alamat (Opsional)</label>
+                    <input type="text" id="edit-address" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Catatan (Opsional)</label>
+                    <input type="text" id="edit-notes" autocomplete="off">
+                </div>
+                
+                <!-- Premium Discount percent setter for future release -->
+                <div class="form-group">
+                    <label>Atur Diskon Otomatis (%) — <span style="color: var(--accent-gold)">Disiapkan</span></label>
+                    <input type="number" id="edit-discount" min="0" max="100" placeholder="0" autocomplete="off">
+                    <small style="color: var(--text-dim); font-size: 0.75rem; margin-top: 0.25rem; display: block;">
+                        Diskon otomatis tersimpan dalam data base untuk pengembangan fitur diskon masa depan.
+                    </small>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('edit-modal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Block Member -->
+    <div class="modal" id="block-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1rem; font-family: var(--font-heading); color: var(--danger);">⚠️ Blokir & Blacklist Member</h2>
+            <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.5rem; line-height: 1.4;">
+                Apakah Anda yakin ingin memblokir member ini? Member yang terblokir tidak diperbolehkan menggunakan layanan dan akan muncul sebagai **BLACK-LISTED** di sistem.
+            </p>
+            <form id="block-member-form" onsubmit="handleBlockMember(event)">
+                <input type="hidden" id="block-id-hidden">
+                <div class="form-group">
+                    <label style="color: white; font-weight: 600;">Alasan Blokir / Pelanggaran <span style="color: var(--danger)">*</span></label>
+                    <textarea id="block-reason" placeholder="Contoh: Merusak stik billiard dan tidak kooperatif" required rows="3" style="width: 100%; padding: 0.8rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 10px; color: white; font-family: inherit; outline: none; resize: none;"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('block-modal')">Batal</button>
+                    <button type="submit" class="btn btn-primary" style="background: var(--danger); border-color: var(--danger); color: white;">Blokir Sekarang</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Core Script Logic -->
+    <script>
+        // Use global API_BASE from app.js if available, otherwise fallback to localhost:3001
+        const MEMBER_API = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:3001/api';
+
+        // Check admin permissions
+        const isAdmin = localStorage.getItem('auth_role') === 'admin' || localStorage.getItem('auth_role') === 'engineer';
+
+        // Global variables
+        let membersData = [];
+        let currentlySelectedCardId = "";
+
+        // Fetch and render members
+        async function loadMembers() {
+            try {
+                const response = await fetch(MEMBER_API + '/members');
+                if (response.ok) {
+                    membersData = await response.json();
+                    renderMembersList(membersData);
+                    updateStats(membersData);
+                } else {
+                    console.error("Gagal memuat data member, status:", response.status);
+                    document.getElementById("member-table-body").innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--danger); padding: 3rem 1rem;">
+                                ⚠️ Server merespons error. Coba muat ulang halaman.
+                            </td>
+                        </tr>
+                    `;
+                }
+            } catch (err) {
+                console.error("Error loading members:", err);
+                document.getElementById("member-table-body").innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--danger); padding: 3rem 1rem;">
+                            ⚠️ Tidak dapat terhubung ke server. Pastikan server backend Anda berjalan di port 3001.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Run immediately — script is at bottom of body, DOM is ready
+        loadMembers();
+
+        // Hide admin-only features for non-admins
+        if (!isAdmin) {
+            const resetBtn = document.querySelector('.btn-reset-member');
+            if (resetBtn) resetBtn.style.display = 'none';
+        }
+
+        // Render member table rows
+        function renderMembersList(list) {
+            const body = document.getElementById("member-table-body");
+            if (!list || list.length === 0) {
+                body.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 4rem 1rem;">
+                            📭 Tidak ada data member yang terdaftar atau cocok dengan pencarian.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Sort members: newest first
+            const sortedList = [...list].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            body.innerHTML = sortedList.map(member => {
+                const createdDate = new Date(member.createdAt).toLocaleDateString("id-ID", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                });
+
+                const isBlocked = member.status === "blocked";
+                const statusBadge = isBlocked 
+                    ? `<span class="status-pill blocked">🔴 Terblokir</span>`
+                    : `<span class="status-pill active">🟢 Aktif</span>`;
+
+                const blockUnblockBtn = isBlocked
+                    ? `<button onclick="confirmUnblockMember(${member.id}, '${member.name}')" class="btn-action btn-unblock" title="Aktifkan Kembali Member">🟢</button>`
+                    : `<button onclick="openBlockModal(${member.id})" class="btn-action btn-block" title="Blokir / Blacklist Member">🔴</button>`;
+
+                // Standardized 8-digit spacing format
+                const formattedId = String(member.id).replace(/(\d{4})(\d{4})/, "$1 $2");
+
+                const adminActions = isAdmin 
+                    ? `<button onclick="openEditModal(${member.id})" class="btn-action btn-edit" title="Edit Profil">✏️</button>
+                       ${blockUnblockBtn}
+                       <button onclick="confirmDeleteMember(${member.id}, '${member.name}')" class="btn-action btn-delete" title="Hapus Permanen">🗑️</button>`
+                    : '';
+
+                return `
+                    <tr>
+                        <td data-label="ID Member"><span class="member-id-badge">${formattedId}</span></td>
+                        <td data-label="Nama Lengkap" style="font-weight: 600;">${escapeHtml(member.name)}</td>
+                        <td data-label="No. HP">${escapeHtml(member.phone)}</td>
+                        <td data-label="Daftar Pada">${createdDate}</td>
+                        <td data-label="Status">${statusBadge}</td>
+                        <td data-label="Aksi" style="text-align: right;">
+                            <div class="action-buttons">
+                                <button onclick="viewMemberDetail(${member.id})" class="btn-action btn-detail" title="Detail Riwayat & Profil">👁️</button>
+                                ${adminActions}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        // Calculate and update stats boxes
+        function updateStats(list) {
+            const total = list.length;
+            const active = list.filter(m => m.status === "active").length;
+            const blocked = list.filter(m => m.status === "blocked").length;
+
+            document.getElementById("stats-total").textContent = total;
+            document.getElementById("stats-active").textContent = active;
+            document.getElementById("stats-blocked").textContent = blocked;
+        }
+
+        // Search & Filter input handler
+        function filterMembers() {
+            const query = document.getElementById("search-member-input").value.toLowerCase().trim();
+            const statusFilter = document.getElementById("filter-status-select").value;
+
+            const filtered = membersData.filter(member => {
+                // Match search string
+                const matchSearch = 
+                    String(member.id).includes(query) ||
+                    member.name.toLowerCase().includes(query) ||
+                    member.phone.includes(query) ||
+                    (member.email && member.email.toLowerCase().includes(query)) ||
+                    (member.address && member.address.toLowerCase().includes(query));
+
+                // Match status filter
+                const matchStatus = statusFilter === "all" || member.status === statusFilter;
+
+                return matchSearch && matchStatus;
+            });
+
+            renderMembersList(filtered);
+        }
+
+        // Open modal by ID
+        function openModal(id) {
+            document.getElementById(id).style.display = "flex";
+        }
+
+        // Close modal by ID
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+        }
+
+        // Open Create Modal
+        function openCreateModal() {
+            document.getElementById("create-member-form").reset();
+            openModal("create-modal");
+        }
+
+        // Submit create member form
+        async function handleCreateMember(e) {
+            e.preventDefault();
+            const name = document.getElementById("create-name").value;
+            const phone = document.getElementById("create-phone").value;
+            const email = document.getElementById("create-email").value;
+            const address = document.getElementById("create-address").value;
+            const notes = document.getElementById("create-notes").value;
+            const createdBy = localStorage.getItem("auth_user") || "kasir";
+
+            const data = { name, phone, email, address, notes, createdBy };
+
+            try {
+                const response = await fetch(MEMBER_API + '/members', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    closeModal("create-modal");
+                    await loadMembers();
+                    
+                    // Display virtual member card modal with the generated info
+                    const formattedId = String(result.member.id).replace(/(\d{4})(\d{4})/, "$1 $2");
+                    currentlySelectedCardId = String(result.member.id);
+
+                    document.getElementById("virtual-card-id").textContent = formattedId;
+                    document.getElementById("virtual-card-name").textContent = result.member.name;
+                    
+                    const regDate = new Date(result.member.createdAt).toLocaleDateString("id-ID", {
+                        month: "2-digit",
+                        year: "2-digit"
+                    });
+                    document.getElementById("virtual-card-date").textContent = regDate;
+
+                    openModal("id-display-modal");
+                } else {
+                    alert("⚠️ Gagal mendaftarkan member: " + (result.message || "Terjadi kesalahan"));
+                }
+            } catch (err) {
+                console.error("Error creating member:", err);
+                alert("⚠️ Gagal mengirim data ke server. Pastikan koneksi aman.");
+            }
+        }
+
+        // Copy ID from Create modal
+        function copyCardId() {
+            if (!currentlySelectedCardId) return;
+            navigator.clipboard.writeText(currentlySelectedCardId)
+                .then(() => {
+                    alert("🎉 ID Member (" + currentlySelectedCardId + ") berhasil disalin ke clipboard!");
+                })
+                .catch(err => {
+                    console.error("Gagal menyalin text:", err);
+                    alert("Nomor ID Member: " + currentlySelectedCardId);
+                });
+        }
+
+        // Copy ID from Detail modal
+        function copyDetailId() {
+            const detailIdElement = document.getElementById("detail-id");
+            if (!detailIdElement) return;
+            const rawId = detailIdElement.textContent.replace(/\s+/g, "");
+            navigator.clipboard.writeText(rawId)
+                .then(() => {
+                    alert("🎉 ID Member (" + rawId + ") berhasil disalin ke clipboard!");
+                })
+                .catch(err => {
+                    console.error("Gagal menyalin text:", err);
+                    alert("Nomor ID Member: " + rawId);
+                });
+        }
+
+        // Open Detail Modal and load details
+        async function viewMemberDetail(id) {
+            try {
+                const response = await fetch(`${MEMBER_API}/members/${id}`);
+                if (!response.ok) throw new Error("Gagal mengambil detail member");
+
+                const member = await response.json();
+                
+                // Set text content
+                const formattedId = String(member.id).replace(/(\d{4})(\d{4})/, "$1 $2");
+                document.getElementById("detail-id").textContent = formattedId;
+                document.getElementById("detail-discount").textContent = (member.discountPercent || 0) + "%";
+                document.getElementById("detail-name").textContent = member.name;
+                document.getElementById("detail-phone").textContent = member.phone;
+                document.getElementById("detail-email").textContent = member.email || "-";
+                document.getElementById("detail-address").textContent = member.address || "-";
+                document.getElementById("detail-notes").textContent = member.notes || "-";
+                document.getElementById("detail-visit-count").textContent = (member.visitCount || 0) + " Kali";
+                document.getElementById("detail-created-by").textContent = member.createdBy || "-";
+                
+                const createdDate = new Date(member.createdAt).toLocaleString("id-ID", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+                document.getElementById("detail-created-at").textContent = createdDate;
+
+                // Handle Status Badge
+                const isBlocked = member.status === "blocked";
+                const badgeContainer = document.getElementById("detail-status-badge");
+                if (isBlocked) {
+                    badgeContainer.innerHTML = `<span class="status-pill blocked">🔴 Terblokir</span>`;
+                    
+                    // Show Block info box
+                    document.getElementById("detail-block-warning").style.display = "block";
+                    document.getElementById("detail-block-reason").textContent = member.blockReason || "-";
+                    document.getElementById("detail-block-by").textContent = member.blockedBy || "-";
+                    
+                    const blockedDate = member.blockedAt ? new Date(member.blockedAt).toLocaleString("id-ID", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }) : "-";
+                    document.getElementById("detail-block-at").textContent = blockedDate;
+                } else {
+                    badgeContainer.innerHTML = `<span class="status-pill active">🟢 Aktif</span>`;
+                    document.getElementById("detail-block-warning").style.display = "none";
+                }
+
+                // Render Visit History
+                const visitBody = document.getElementById("visit-history-body");
+                if (!member.visitHistory || member.visitHistory.length === 0) {
+                    visitBody.innerHTML = `
+                        <tr>
+                            <td colspan="3" class="visit-history-empty">
+                                📭 Belum ada riwayat kunjungan yang tercatat.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    visitBody.innerHTML = member.visitHistory.map(visit => {
+                        const visitDate = new Date(visit.date).toLocaleDateString("id-ID", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        });
+                        
+                        let typeText = "Billiard";
+                        if (visit.type === "karaoke") typeText = "🎤 Karaoke";
+                        else if (visit.type === "pos") typeText = "🍔 F&B / Menu";
+                        
+                        const visitAmount = visit.amount ? ` (${formatRupiah(visit.amount)})` : "";
+                        
+                        return `
+                            <tr>
+                                <td>${visitDate}</td>
+                                <td><span style="font-weight: 600;">${typeText}</span></td>
+                                <td>${escapeHtml(visit.description)}${visitAmount}</td>
+                            </tr>
+                        `;
+                    }).join("");
+                }
+
+                openModal("detail-modal");
+            } catch (err) {
+                console.error("Error viewing detail:", err);
+                alert("⚠️ Gagal mengambil informasi detail member.");
+            }
+        }
+
+        // formatRupiah is provided globally by app.js — do NOT redeclare here
+
+        // Open Edit Modal and fill details
+        async function openEditModal(id) {
+            try {
+                const response = await fetch(`${MEMBER_API}/members/${id}`);
+                if (!response.ok) throw new Error("Gagal mengambil detail member");
+
+                const member = await response.json();
+                
+                document.getElementById("edit-id-hidden").value = member.id;
+                document.getElementById("edit-name").value = member.name;
+                document.getElementById("edit-phone").value = member.phone;
+                document.getElementById("edit-email").value = member.email || "";
+                document.getElementById("edit-address").value = member.address || "";
+                document.getElementById("edit-notes").value = member.notes || "";
+                document.getElementById("edit-discount").value = member.discountPercent || 0;
+
+                openModal("edit-modal");
+            } catch (err) {
+                console.error("Error opening edit modal:", err);
+                alert("⚠️ Gagal mengambil informasi data member.");
+            }
+        }
+
+        // Submit edit member form
+        async function handleEditMember(e) {
+            e.preventDefault();
+            const id = document.getElementById("edit-id-hidden").value;
+            const name = document.getElementById("edit-name").value;
+            const phone = document.getElementById("edit-phone").value;
+            const email = document.getElementById("edit-email").value;
+            const address = document.getElementById("edit-address").value;
+            const notes = document.getElementById("edit-notes").value;
+            const discountPercent = document.getElementById("edit-discount").value;
+
+            const data = { name, phone, email, address, notes, discountPercent };
+
+            try {
+                const response = await fetch(`${MEMBER_API}/members/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    closeModal("edit-modal");
+                    await loadMembers();
+                    alert("🎉 Data member berhasil diperbarui!");
+                } else {
+                    alert("⚠️ Gagal memperbarui data member: " + (result.message || "Terjadi kesalahan"));
+                }
+            } catch (err) {
+                console.error("Error editing member:", err);
+                alert("⚠️ Gagal mengirim data perubahan ke server.");
+            }
+        }
+
+        // Open Block Modal
+        function openBlockModal(id) {
+            document.getElementById("block-id-hidden").value = id;
+            document.getElementById("block-reason").value = "";
+            openModal("block-modal");
+        }
+
+        // Submit block member form
+        async function handleBlockMember(e) {
+            e.preventDefault();
+            const id = document.getElementById("block-id-hidden").value;
+            const reason = document.getElementById("block-reason").value;
+            const blockedBy = localStorage.getItem("auth_user") || "kasir";
+
+            const data = { reason, blockedBy };
+
+            try {
+                const response = await fetch(`${MEMBER_API}/members/${id}/block`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    closeModal("block-modal");
+                    await loadMembers();
+                    alert("⚠️ Member telah berhasil diblokir & di-blacklist!");
+                } else {
+                    alert("⚠️ Gagal memblokir member: " + (result.message || "Terjadi kesalahan"));
+                }
+            } catch (err) {
+                console.error("Error blocking member:", err);
+                alert("⚠️ Gagal memproses permintaan blokir ke server.");
+            }
+        }
+
+        // Confirm unblock direct action
+        function confirmUnblockMember(id, name) {
+            if (confirm(`Apakah Anda yakin ingin mengaktifkan kembali member "${name}"? Status member akan kembali normal.`)) {
+                handleUnblockMember(id);
+            }
+        }
+
+        // Request unblock to server
+        async function handleUnblockMember(id) {
+            try {
+                const response = await fetch(`${MEMBER_API}/members/${id}/unblock`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    await loadMembers();
+                    alert("🎉 Member berhasil diaktifkan kembali!");
+                } else {
+                    alert("⚠️ Gagal mengaktifkan member: " + (result.message || "Terjadi kesalahan"));
+                }
+            } catch (err) {
+                console.error("Error unblocking member:", err);
+                alert("⚠️ Gagal mengirim permintaan aktivasi ke server.");
+            }
+        }
+
+        // Confirm delete direct action
+        function confirmDeleteMember(id, name) {
+            const role = localStorage.getItem("auth_role");
+            
+            // Re-verify warning
+            const confirmation = confirm(`⚠️ PERINGATAN: Menghapus member "${name}" akan menghapus secara PERMANEN seluruh riwayat & keanggotaan dari database!\n\nApakah Anda yakin ingin melanjutkan?`);
+            if (confirmation) {
+                handleDeleteMember(id);
+            }
+        }
+
+        // Request delete to server
+        async function handleDeleteMember(id) {
+            try {
+                const response = await fetch(`${MEMBER_API}/members/${id}`, {
+                    method: "DELETE"
+                });
+
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    await loadMembers();
+                    alert("🗑️ Member telah berhasil dihapus secara permanen!");
+                } else {
+                    alert("⚠️ Gagal menghapus member: " + (result.message || "Anda tidak memiliki wewenang atau terjadi kesalahan."));
+                }
+            } catch (err) {
+                console.error("Error deleting member:", err);
+                alert("⚠️ Gagal mengirim permintaan penghapusan ke server.");
+            }
+        }
+
+        // Double confirmation and request reset to server
+        async function resetAllMembers() {
+            const firstConfirm = confirm("⚠️ PERINGATAN KRITIS: Anda akan menghapus SELURUH data member di sistem! Tindakan ini TIDAK dapat dibatalkan.\\n\\nApakah Anda benar-benar yakin ingin melanjutkan?");
+            if (!firstConfirm) return;
+
+            const secondConfirm = prompt("🔒 KONFIRMASI KEAMANAN GANDA:\\n\\nUntuk menghapus seluruh data member secara permanen, silakan ketik kata 'RESET' di bawah ini:");
+            if (secondConfirm !== "RESET") {
+                alert("❌ Konfirmasi gagal. Kata kunci salah atau dibatalkan.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${MEMBER_API}/members`, {
+                    method: "DELETE"
+                });
+
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    await loadMembers();
+                    alert("🗑️ SELURUH data member berhasil direset dan dihapus secara permanen!");
+                } else {
+                    alert("⚠️ Gagal mereset member: " + (result.message || "Terjadi kesalahan."));
+                }
+            } catch (err) {
+                console.error("Error resetting members:", err);
+                alert("⚠️ Gagal mengirim permintaan reset ke server.");
+            }
+        }
+
+        // Utility to escape HTML and prevent XSS injection
+        function escapeHtml(text) {
+            if (!text) return "";
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+    </script>
+</body>
+</html>

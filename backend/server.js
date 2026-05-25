@@ -79,6 +79,7 @@ function readDB() {
     if (!data.stockLogs) data.stockLogs = [];
     if (!data.bookings) data.bookings = [];
     if (!data.menu) data.menu = [];
+    if (!data.members) data.members = [];
     if (!data.settings)
       data.settings = { shopOpen: true, onlineBookingOpen: true };
     if (data.settings.onlineBookingOpen === undefined)
@@ -99,6 +100,7 @@ function readDB() {
       employees: [],
       attendance: [],
       stockLogs: [],
+      members: [],
       settings: { shopOpen: true, onlineBookingOpen: true },
     };
   }
@@ -1167,6 +1169,177 @@ app.delete("/api/users/:id", (req, res) => {
   res.json({ success: true });
 });
 
+// --- MEMBERS API ---
+function generateMemberId(db) {
+  let id;
+  do {
+    // 8-digit unique numeric ID: 10000000 - 99999999
+    id = Math.floor(10000000 + Math.random() * 90000000);
+  } while ((db.members || []).some((m) => m.id === id));
+  return id;
+}
+
+// GET all members
+app.get("/api/members", (req, res) => {
+  const db = readDB();
+  res.json(db.members || []);
+});
+
+// GET check member status by numeric ID (used by cashier at booking)
+app.get("/api/members/check/:id", (req, res) => {
+  const db = readDB();
+  const member = (db.members || []).find(
+    (m) => String(m.id) === String(req.params.id)
+  );
+  if (!member) return res.status(404).json({ found: false });
+  res.json({ found: true, member });
+});
+
+// GET single member detail
+app.get("/api/members/:id", (req, res) => {
+  const db = readDB();
+  const member = (db.members || []).find(
+    (m) => String(m.id) === String(req.params.id)
+  );
+  if (!member) return res.status(404).json({ message: "Member tidak ditemukan" });
+  res.json(member);
+});
+
+// POST create new member (backend generates unique ID)
+app.post("/api/members", (req, res) => {
+  const db = readDB();
+  if (!db.members) db.members = [];
+  const { name, phone, email, address, notes, createdBy } = req.body;
+  if (!name || !phone)
+    return res.status(400).json({ success: false, message: "Nama dan nomor HP wajib diisi" });
+
+  const newMember = {
+    id: generateMemberId(db),
+    name: name.trim(),
+    phone: phone.trim(),
+    email: email ? email.trim() : "",
+    address: address ? address.trim() : "",
+    notes: notes ? notes.trim() : "",
+    status: "active",
+    blockReason: "",
+    blockedBy: "",
+    blockedAt: null,
+    discountPercent: 0,   // reserved for future auto-discount feature
+    createdBy: createdBy || "kasir",
+    createdAt: new Date().toISOString(),
+    visitCount: 0,
+    visitHistory: [],
+  };
+  db.members.push(newMember);
+  writeDB(db);
+  res.json({ success: true, member: newMember });
+});
+
+// PUT edit member data
+app.put("/api/members/:id", (req, res) => {
+  const db = readDB();
+  const idx = (db.members || []).findIndex(
+    (m) => String(m.id) === String(req.params.id)
+  );
+  if (idx === -1)
+    return res.status(404).json({ success: false, message: "Member tidak ditemukan" });
+
+  const { name, phone, email, address, notes, discountPercent } = req.body;
+  if (name !== undefined) db.members[idx].name = name.trim();
+  if (phone !== undefined) db.members[idx].phone = phone.trim();
+  if (email !== undefined) db.members[idx].email = email.trim();
+  if (address !== undefined) db.members[idx].address = address.trim();
+  if (notes !== undefined) db.members[idx].notes = notes.trim();
+  if (discountPercent !== undefined)
+    db.members[idx].discountPercent = parseFloat(discountPercent) || 0;
+
+  writeDB(db);
+  res.json({ success: true, member: db.members[idx] });
+});
+
+// POST block a member
+app.post("/api/members/:id/block", (req, res) => {
+  const db = readDB();
+  const member = (db.members || []).find(
+    (m) => String(m.id) === String(req.params.id)
+  );
+  if (!member)
+    return res.status(404).json({ success: false, message: "Member tidak ditemukan" });
+
+  const { reason, blockedBy } = req.body;
+  if (!reason || !reason.trim())
+    return res.status(400).json({ success: false, message: "Alasan blokir wajib diisi" });
+
+  member.status = "blocked";
+  member.blockReason = reason.trim();
+  member.blockedBy = blockedBy || "kasir";
+  member.blockedAt = new Date().toISOString();
+  writeDB(db);
+  res.json({ success: true, member });
+});
+
+// POST unblock a member
+app.post("/api/members/:id/unblock", (req, res) => {
+  const db = readDB();
+  const member = (db.members || []).find(
+    (m) => String(m.id) === String(req.params.id)
+  );
+  if (!member)
+    return res.status(404).json({ success: false, message: "Member tidak ditemukan" });
+
+  member.status = "active";
+  member.blockReason = "";
+  member.blockedBy = "";
+  member.blockedAt = null;
+  writeDB(db);
+  res.json({ success: true, member });
+});
+
+// POST add visit record to member (called when session starts/ends)
+app.post("/api/members/:id/visit", (req, res) => {
+  const db = readDB();
+  const member = (db.members || []).find(
+    (m) => String(m.id) === String(req.params.id)
+  );
+  if (!member)
+    return res.status(404).json({ success: false, message: "Member tidak ditemukan" });
+
+  if (!member.visitHistory) member.visitHistory = [];
+  const visit = {
+    date: new Date().toISOString(),
+    description: req.body.description || "Kunjungan",
+    amount: req.body.amount || 0,
+    type: req.body.type || "billiard",
+  };
+  member.visitHistory.unshift(visit); // newest first
+  member.visitCount = (member.visitCount || 0) + 1;
+  writeDB(db);
+  res.json({ success: true });
+});
+
+// DELETE member (kasir & admin)
+app.delete("/api/members/:id", (req, res) => {
+  const db = readDB();
+  const exists = (db.members || []).some(
+    (m) => String(m.id) === String(req.params.id)
+  );
+  if (!exists)
+    return res.status(404).json({ success: false, message: "Member tidak ditemukan" });
+  db.members = db.members.filter(
+    (m) => String(m.id) !== String(req.params.id)
+  );
+  writeDB(db);
+  res.json({ success: true });
+});
+
+// DELETE reset all members (kasir & admin)
+app.delete("/api/members", (req, res) => {
+  const db = readDB();
+  db.members = [];
+  writeDB(db);
+  res.json({ success: true, message: "Seluruh data member berhasil direset" });
+});
+
 // --- SHOP SETTINGS API ---
 app.get("/api/settings", (req, res) => {
   const db = readDB();
@@ -1225,7 +1398,7 @@ app.post("/api/bookings", (req, res) => {
     });
   }
 
-  const { customerName, targetId, targetType, bookingTime, notes } = req.body;
+  const { customerName, targetId, targetType, bookingTime, notes, memberId } = req.body;
 
   // Check if duplicate booking on same calendar day
   const targetDate = bookingTime ? bookingTime.substring(0, 10) : "";
@@ -1254,6 +1427,7 @@ app.post("/api/bookings", (req, res) => {
     targetType,
     bookingTime,
     notes,
+    memberId: memberId || "",
     status: "pending",
   };
   db.bookings.push(newBooking);
@@ -1317,6 +1491,165 @@ app.post("/api/bookings/reset", (req, res) => {
   writeDB(db);
   res.json({ success: true });
 });
+
+// ============================================================
+// MEMBER CARD SYSTEM API
+// ============================================================
+
+// Generate unique 8-digit numeric member ID
+function generateMemberId(db) {
+  const existingIds = new Set((db.members || []).map((m) => String(m.id)));
+  let newId;
+  let attempts = 0;
+  do {
+    // Random 8-digit number: 10000000 - 99999999
+    newId = String(Math.floor(10000000 + Math.random() * 90000000));
+    attempts++;
+    if (attempts > 10000) throw new Error("Tidak dapat menghasilkan ID unik.");
+  } while (existingIds.has(newId));
+  return newId;
+}
+
+// GET /api/members - Get all members
+app.get("/api/members", (req, res) => {
+  try {
+    const db = readDB();
+    res.json(db.members || []);
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Gagal membaca data member." });
+  }
+});
+
+// GET /api/members/:id - Get single member by ID
+app.get("/api/members/:id", (req, res) => {
+  try {
+    const db = readDB();
+    const member = (db.members || []).find((m) => String(m.id) === String(req.params.id));
+    if (!member) return res.status(404).json({ success: false, message: "Member tidak ditemukan." });
+    res.json(member);
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Gagal membaca data member." });
+  }
+});
+
+// POST /api/members - Create new member
+app.post("/api/members", (req, res) => {
+  try {
+    const db = readDB();
+    if (!db.members) db.members = [];
+    const { name, phone, email, address, notes, createdBy } = req.body;
+    if (!name || !phone) {
+      return res.status(400).json({ success: false, message: "Nama dan No. HP wajib diisi." });
+    }
+    const newId = generateMemberId(db);
+    const newMember = {
+      id: newId,
+      name: name.trim(),
+      phone: phone.trim(),
+      email: (email || "").trim(),
+      address: (address || "").trim(),
+      notes: (notes || "").trim(),
+      status: "active",
+      discountPercent: 0,
+      visitCount: 0,
+      visitHistory: [],
+      createdBy: createdBy || "kasir",
+      createdAt: new Date().toISOString(),
+      blockedAt: null,
+      blockedBy: null,
+      blockReason: null,
+    };
+    db.members.push(newMember);
+    writeDB(db);
+    res.json({ success: true, member: newMember });
+  } catch (err) {
+    console.error("Error creating member:", err);
+    res.status(500).json({ success: false, message: err.message || "Gagal membuat member." });
+  }
+});
+
+// PUT /api/members/:id - Edit member data
+app.put("/api/members/:id", (req, res) => {
+  try {
+    const db = readDB();
+    const idx = (db.members || []).findIndex((m) => String(m.id) === String(req.params.id));
+    if (idx === -1) return res.status(404).json({ success: false, message: "Member tidak ditemukan." });
+    const { name, phone, email, address, notes, discountPercent } = req.body;
+    if (!name || !phone) {
+      return res.status(400).json({ success: false, message: "Nama dan No. HP wajib diisi." });
+    }
+    db.members[idx] = {
+      ...db.members[idx],
+      name: name.trim(),
+      phone: phone.trim(),
+      email: (email || "").trim(),
+      address: (address || "").trim(),
+      notes: (notes || "").trim(),
+      discountPercent: parseFloat(discountPercent) || 0,
+      updatedAt: new Date().toISOString(),
+    };
+    writeDB(db);
+    res.json({ success: true, member: db.members[idx] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Gagal memperbarui data member." });
+  }
+});
+
+// DELETE /api/members/:id - Delete member permanently
+app.delete("/api/members/:id", (req, res) => {
+  try {
+    const db = readDB();
+    const before = (db.members || []).length;
+    db.members = (db.members || []).filter((m) => String(m.id) !== String(req.params.id));
+    if (db.members.length === before) {
+      return res.status(404).json({ success: false, message: "Member tidak ditemukan." });
+    }
+    writeDB(db);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Gagal menghapus member." });
+  }
+});
+
+// POST /api/members/:id/block - Block / blacklist a member
+app.post("/api/members/:id/block", (req, res) => {
+  try {
+    const db = readDB();
+    const idx = (db.members || []).findIndex((m) => String(m.id) === String(req.params.id));
+    if (idx === -1) return res.status(404).json({ success: false, message: "Member tidak ditemukan." });
+    const { reason, blockedBy } = req.body;
+    if (!reason) return res.status(400).json({ success: false, message: "Alasan blokir wajib diisi." });
+    db.members[idx].status = "blocked";
+    db.members[idx].blockReason = reason.trim();
+    db.members[idx].blockedBy = blockedBy || "kasir";
+    db.members[idx].blockedAt = new Date().toISOString();
+    writeDB(db);
+    res.json({ success: true, member: db.members[idx] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Gagal memblokir member." });
+  }
+});
+
+// POST /api/members/:id/unblock - Unblock / reactivate a member
+app.post("/api/members/:id/unblock", (req, res) => {
+  try {
+    const db = readDB();
+    const idx = (db.members || []).findIndex((m) => String(m.id) === String(req.params.id));
+    if (idx === -1) return res.status(404).json({ success: false, message: "Member tidak ditemukan." });
+    db.members[idx].status = "active";
+    db.members[idx].blockReason = null;
+    db.members[idx].blockedBy = null;
+    db.members[idx].blockedAt = null;
+    writeDB(db);
+    res.json({ success: true, member: db.members[idx] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Gagal mengaktifkan kembali member." });
+  }
+});
+
+// ============================================================
+// END MEMBER CARD SYSTEM API
+// ============================================================
 
 // Synchronously initialize MongoDB and then listen to port
 syncFromMongoDB().then(() => {

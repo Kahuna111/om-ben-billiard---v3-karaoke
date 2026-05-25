@@ -158,6 +158,18 @@ function updateTimers() {
 
 function openStartModal(tableId) {
     document.getElementById('modal-table-id').value = tableId;
+    
+    // Reset member inputs and feedbacks
+    const memberInput = document.getElementById('member-id-input');
+    const memberFeedback = document.getElementById('member-feedback');
+    const submitBtn = document.getElementById('start-submit-btn');
+    if (memberInput) memberInput.value = '';
+    if (memberFeedback) {
+        memberFeedback.style.display = 'none';
+        memberFeedback.textContent = '';
+    }
+    if (submitBtn) submitBtn.disabled = false;
+
     startModal.style.display = 'flex';
 }
 
@@ -294,14 +306,132 @@ window.addEventListener('load', () => {
     const params = new URLSearchParams(window.location.search);
     const autoId = params.get('autoStart');
     const name = params.get('name');
+    const memberId = params.get('memberId');
     if (autoId) {
         setTimeout(() => {
             openStartModal(autoId);
             document.getElementById('customer-name').value = decodeURIComponent(name || '');
+            if (memberId) {
+                const memberInput = document.getElementById('member-id-input');
+                if (memberInput) {
+                    memberInput.value = decodeURIComponent(memberId);
+                    checkMemberStatus();
+                }
+            }
         }, 500);
     }
 });
 
 function goToBookingPage(type, id) {
     window.location.href = `bookings.html?target=${type}|${id}`;
+}
+
+// Logika Validasi & Deteksi ID Member Real-time di Kasir
+async function checkMemberStatus() {
+    console.log("[Dashboard] checkMemberStatus starting...");
+    const memberInput = document.getElementById('member-id-input');
+    const memberFeedback = document.getElementById('member-feedback');
+    const submitBtn = document.getElementById('start-submit-btn');
+    const nameInput = document.getElementById('customer-name');
+
+    if (!memberInput || !memberFeedback) {
+        console.error("[Dashboard] memberInput or memberFeedback element is missing!");
+        return;
+    }
+
+    const val = memberInput.value.replace(/\s/g, '');
+    console.log("[Dashboard] Input value:", val);
+    if (!val) {
+        console.log("[Dashboard] Empty value, clearing feedback");
+        memberFeedback.style.display = 'none';
+        memberFeedback.textContent = '';
+        memberInput.style.borderColor = '';
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+    }
+
+    // Must be numeric
+    if (!/^\d+$/.test(val)) {
+        console.log("[Dashboard] Value is not numeric");
+        memberFeedback.style.display = 'block';
+        memberFeedback.style.color = '#ef4444';
+        memberFeedback.textContent = '⚠️ ID Member harus berupa angka!';
+        memberInput.style.borderColor = '#ef4444';
+        if (submitBtn) submitBtn.disabled = true;
+        return;
+    }
+
+    memberFeedback.style.display = 'block';
+    memberFeedback.style.color = 'var(--text-dim)';
+    memberFeedback.textContent = '⏳ Memeriksa status member...';
+    memberInput.style.borderColor = '';
+
+    try {
+        const apiBaseUrl = (typeof API_BASE !== 'undefined') ? API_BASE : '/api';
+        console.log("[Dashboard] Fetching from:", `${apiBaseUrl}/members/check/${val}`);
+        const res = await fetch(`${apiBaseUrl}/members/check/${val}`).then(r => r.json()).catch((err) => {
+            console.error("[Dashboard] Fetch call failed:", err);
+            return null;
+        });
+
+        console.log("[Dashboard] Fetch response:", res);
+
+        if (res && res.found && res.member) {
+            const m = res.member;
+            console.log("[Dashboard] Member found:", m);
+            if (m.status === 'blocked') {
+                memberFeedback.style.color = '#ef4444';
+                memberFeedback.textContent = `❌ ID Member DIBLOKIR! Alasan: ${m.blockReason || 'Tidak ada alasan'}`;
+                memberInput.style.borderColor = '#ef4444';
+                if (submitBtn) submitBtn.disabled = true;
+            } else {
+                memberFeedback.style.color = '#10b981';
+                memberFeedback.textContent = `✅ Member Aktif: ${m.name}`;
+                memberInput.style.borderColor = '#10b981';
+                if (nameInput) nameInput.value = m.name;
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        } else {
+            console.log("[Dashboard] Member not found");
+            memberFeedback.style.color = '#ef4444';
+            memberFeedback.textContent = '❌ ID Member tidak terdaftar!';
+            memberInput.style.borderColor = '#ef4444';
+            if (submitBtn) submitBtn.disabled = false;
+        }
+    } catch (err) {
+        console.error("[Dashboard] Error caught in try-catch:", err);
+        memberFeedback.style.color = '#ef4444';
+        memberFeedback.textContent = '⚠️ Gagal memeriksa member ke server.';
+        memberInput.style.borderColor = '#ef4444';
+        if (submitBtn) submitBtn.disabled = false;
+    }
+}
+
+function onMemberIdInput() {
+    const memberInput = document.getElementById('member-id-input');
+    if (!memberInput) return;
+    const val = memberInput.value.replace(/\s/g, '');
+    console.log("[Dashboard] onMemberIdInput called, ID value:", val);
+    
+    const memberFeedback = document.getElementById('member-feedback');
+    const submitBtn = document.getElementById('start-submit-btn');
+
+    if (val.length === 8) {
+        checkMemberStatus();
+    } else if (val.length === 0) {
+        if (memberFeedback) {
+            memberFeedback.style.display = 'none';
+            memberFeedback.textContent = '';
+        }
+        memberInput.style.borderColor = '';
+        if (submitBtn) submitBtn.disabled = false;
+    } else {
+        if (memberFeedback) {
+            memberFeedback.style.display = 'block';
+            memberFeedback.style.color = '#f59e0b';
+            memberFeedback.textContent = '⏳ Menunggu 8 digit ID...';
+        }
+        memberInput.style.borderColor = '#f59e0b';
+        if (submitBtn) submitBtn.disabled = true;
+    }
 }

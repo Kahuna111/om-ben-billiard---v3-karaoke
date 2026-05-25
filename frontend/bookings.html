@@ -488,11 +488,17 @@
                     targetName = `Meja ${b.targetId}`;
                 }
 
+                const formattedMemberId = b.memberId ? String(b.memberId).replace(/(\d{4})(\d{4})/, "$1 $2") : "";
+                const memberBadge = b.memberId 
+                    ? `<span style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; margin-left: 0.5rem; letter-spacing: 0.5px;">🆔 Member: ${formattedMemberId}</span>`
+                    : '';
+
                 item.innerHTML = `
                     <div>
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
                             <span class="badge-type ${b.targetType === 'room' ? 'type-room' : 'type-table'}">${b.targetType}</span>
                             <strong style="font-size: 1.1rem;">${b.customerName}</strong>
+                            ${memberBadge}
                         </div>
                         <div style="color: var(--text-dim); font-size: 0.85rem;">
                             📍 ${targetName} | ⏰ ${date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} - ${date.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}
@@ -500,7 +506,7 @@
                         ${b.notes ? `<div style="font-size: 0.75rem; color: var(--accent-gold); margin-top: 0.4rem;">📝 ${b.notes}</div>` : ''}
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="checkInBooking('${b.id}', '${b.targetType}', '${b.targetId}', '${b.customerName.replace(/'/g, "\\'")}')">Mulai Sewa</button>
+                        <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="checkInBooking('${b.id}', '${b.targetType}', '${b.targetId}', '${b.customerName.replace(/'/g, "\\'")}', '${b.memberId || ''}')">Mulai Sewa</button>
                         <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem; color: var(--danger); border-color: rgba(231,76,60,0.2);" onclick="cancelBooking('${b.id}')">Batal</button>
                     </div>
                 `;
@@ -578,14 +584,14 @@
             }
         }
 
-        async function checkInBooking(bookingId, type, targetId, customerName) {
+        async function checkInBooking(bookingId, type, targetId, customerName, memberId = '') {
             if (confirm(`Mulai sesi sewa untuk ${customerName}?`)) {
                 // 1. Delete booking with action=checkin to archive in history
                 await deleteData(`/bookings/${bookingId}?action=checkin`);
                 
                 // 2. Start session (Redirect to respective dashboard with params)
                 const page = type === 'room' ? 'karaoke.html' : 'index.html';
-                window.location.href = `${page}?autoStart=${targetId}&name=${encodeURIComponent(customerName)}`;
+                window.location.href = `${page}?autoStart=${targetId}&name=${encodeURIComponent(customerName)}&memberId=${encodeURIComponent(memberId)}`;
             }
         }
 

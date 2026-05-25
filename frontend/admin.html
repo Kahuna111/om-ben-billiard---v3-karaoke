@@ -138,22 +138,6 @@
           </div>
         </div>
 
-        <!-- Dynamic Category Tabs for Separated Menu Management -->
-        <div
-          id="category-tabs"
-          style="
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-          "
-        >
-          <!-- Dynamic categories injected here -->
-        </div>
-
         <div
           style="
             background: var(--card-bg);
@@ -472,6 +456,40 @@
       }
 
       // Auto Refresh Admin Menu every 30s
+setInterval(loadMenu, 30000);
+loadMenu();
+
+// Load today's attendance
+async function loadAttendance() {
+  const now = typeof getSyncedNow === 'function' ? getSyncedNow() : new Date();
+  const today = now.toISOString().split('T')[0];
+  try {
+    const res = await fetch(`/api/attendance?date=${today}`);
+    if (!res.ok) throw new Error('Failed to fetch attendance');
+    const data = await res.json();
+    const tbody = document.getElementById('attendance-body');
+    tbody.innerHTML = '';
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" style="padding:1rem; text-align:center; color:var(--text-dim);">Tidak ada kehadiran hari ini</td></tr>`;
+      return;
+    }
+    data.forEach(item => {
+      const inTime = new Date(item.clockIn).toLocaleTimeString('id-ID');
+      const outTime = item.clockOut ? new Date(item.clockOut).toLocaleTimeString('id-ID') : '-';
+      tbody.innerHTML += `
+        <tr>
+          <td style="padding:1rem; color:var(--text-dim);" data-label="Nama">${item.employeeName}</td>
+          <td style="padding:1rem; color:var(--text-dim);" data-label="Masuk">${inTime}</td>
+          <td style="padding:1rem; color:var(--text-dim);" data-label="Keluar">${outTime}</td>
+        </tr>`;
+    });
+  } catch (e) {
+    console.error('Attendance load error', e);
+    const tbody = document.getElementById('attendance-body');
+    tbody.innerHTML = `<tr><td colspan="3" style="padding:1rem; text-align:center; color:red;">Error memuat data</td></tr>`;
+  }
+}
+
       setInterval(loadMenu, 30000);
       loadMenu();
     </script>

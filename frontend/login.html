@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      // Force redirect from file:// to local server to avoid connection and storage sandbox issues
+      if (window.location.protocol === 'file:') {
+        const fileName = window.location.pathname.split('/').pop() || 'login.html';
+        window.location.href = 'http://localhost:3001/' + fileName;
+      }
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login | Om Ben Billiard</title>
@@ -95,6 +102,38 @@
     </div>
 
     <script>
+      // Redirect from file:// to localhost:3001 server
+      if (window.location.protocol === 'file:') {
+        const fileName = window.location.pathname.split('/').pop() || 'login.html';
+        window.location.href = 'http://localhost:3001/' + fileName;
+      }
+
+      // Intercept global fetch to map relative /api calls to port 3001 if on other port or file://
+      (function interceptFetch() {
+        if (window.fetch && window.fetch.__isIntercepted) return;
+        const originalFetch = window.fetch;
+        if (!originalFetch) return;
+
+        window.fetch = function (resource, options) {
+          if (typeof resource === 'string') {
+            const isLocalDev = window.location.protocol === 'file:' || 
+              ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3001');
+            
+            if (isLocalDev) {
+              if (resource.startsWith('/api/')) {
+                resource = 'http://localhost:3001' + resource;
+              } else if (resource.startsWith('api/')) {
+                resource = 'http://localhost:3001/' + resource;
+              } else if (resource === '/api') {
+                resource = 'http://localhost:3001/api';
+              }
+            }
+          }
+          return originalFetch.call(window, resource, options);
+        };
+        window.fetch.__isIntercepted = true;
+      })();
+
       document.getElementById("login-form").onsubmit = async (e) => {
         e.preventDefault();
         const username = document.getElementById("username").value;

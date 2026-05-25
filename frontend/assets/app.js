@@ -1,4 +1,38 @@
-const API_BASE = "/api";
+// Redirect from file:// to localhost:3001 server
+if (window.location.protocol === 'file:') {
+  const fileName = window.location.pathname.split('/').pop() || 'index.html';
+  window.location.href = 'http://localhost:3001/' + fileName;
+}
+
+// Intercept global fetch to map relative /api calls to port 3001 if on other port or file://
+(function interceptFetch() {
+  if (window.fetch && window.fetch.__isIntercepted) return;
+  const originalFetch = window.fetch;
+  if (!originalFetch) return;
+
+  window.fetch = function (resource, options) {
+    if (typeof resource === 'string') {
+      const isLocalDev = window.location.protocol === 'file:' || 
+        ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3001');
+      
+      if (isLocalDev) {
+        if (resource.startsWith('/api/')) {
+          resource = 'http://localhost:3001' + resource;
+        } else if (resource.startsWith('api/')) {
+          resource = 'http://localhost:3001/' + resource;
+        } else if (resource === '/api') {
+          resource = 'http://localhost:3001/api';
+        }
+      }
+    }
+    return originalFetch.call(window, resource, options);
+  };
+  window.fetch.__isIntercepted = true;
+})();
+
+const API_BASE = (window.location.protocol === 'file:' || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3001'))
+  ? 'http://localhost:3001/api'
+  : '/api';
 
 // ===== THEME (DARK / LIGHT MODE) =====
 (function initTheme() {
@@ -25,7 +59,28 @@ function toggleTheme() {
 // --- SESSION PERSISTENCE GUARD ---
 // Enforce session-only login credentials (wipe from localStorage on fresh session startup)
 if (!sessionStorage.getItem("session_active_flag")) {
-  if (document.referrer && document.referrer.includes("login.html")) {
+  // Check if user came from another internal app page (not just login.html)
+  const isInternalNavigation = document.referrer && (
+    document.referrer.includes("login.html") ||
+    document.referrer.includes("index.html") ||
+    document.referrer.includes("admin.html") ||
+    document.referrer.includes("member.html") ||
+    document.referrer.includes("karaoke.html") ||
+    document.referrer.includes("pos.html") ||
+    document.referrer.includes("finance.html") ||
+    document.referrer.includes("booking") ||
+    document.referrer.includes("monitoring.html") ||
+    document.referrer.includes("db-admin.html") ||
+    document.referrer.includes("profile.html") ||
+    document.referrer.includes("stock-history.html") ||
+    document.referrer.includes("attendance") ||
+    document.referrer.includes("rental.html") ||
+    document.referrer.includes("karaoke-settings.html") ||
+    document.referrer.includes("users-admin.html") ||
+    (document.referrer.includes("localhost:3001") || document.referrer.includes("127.0.0.1:3001"))
+  );
+
+  if (isInternalNavigation) {
     sessionStorage.setItem("session_active_flag", "true");
   } else {
     localStorage.removeItem("auth_role");
@@ -357,6 +412,7 @@ function renderNavbar(active) {
             <li><a href="finance.html" class="${active === "finance" ? "active-admin" : ""}">📊 LAPORAN</a></li>
             <li><a href="attendance-admin.html" class="${active === "attendance-admin" ? "active-admin" : ""}">👥 STAF</a></li>
             <li><a href="bookings.html" class="nav-booking ${active === "bookings" ? "active-admin" : ""}">📅 BOOKING</a></li>
+            <li><a href="member.html" class="${active === "member" ? "active-admin" : ""}">🪪 MEMBER</a></li>
             <li><a href="db-admin.html" class="${active === "db-admin" ? "active-admin" : ""}">💾 BACKUP</a></li>
         `;
   } else {
@@ -366,6 +422,7 @@ function renderNavbar(active) {
             <li><a href="karaoke.html" class="${active === "karaoke" ? "active" : ""}">🎤 Karaoke</a></li>
             <li><a href="pos.html" class="${active === "pos" ? "active" : ""}">🍔 Menu</a></li>
             <li><a href="bookings.html" class="nav-booking ${active === "bookings" ? "active-admin" : ""}">📅 Booking</a></li>
+            <li><a href="member.html" class="${active === "member" ? "active" : ""}">🪪 Member</a></li>
         `;
   }
 
@@ -763,8 +820,11 @@ async function printReceipt(data) {
     iframe.style.position = "absolute";
     iframe.style.left = "-9999px";
     iframe.style.top = "0";
-    iframe.style.width = "300px";
-    iframe.style.height = "300px";
+    // Set width according to selected printer size for accurate layout
+    const paperWidth = is80 ? "80mm" : "58mm";
+    iframe.style.width = paperWidth;
+    // Height set high enough to contain full receipt content
+    iframe.style.height = "500px";
     iframe.style.border = "0";
     document.body.appendChild(iframe);
   }
@@ -856,12 +916,17 @@ async function printReceipt(data) {
         </html>
     `);
   doc.close();
-
-  // Bulletproof print trigger from parent window after document write
-  setTimeout(() => {
+  // Attach onload handler to trigger print after iframe content loads
+  iframe.onload = function() {
     iframe.contentWindow.focus();
     iframe.contentWindow.print();
-  }, 250);
+    // Clean up the iframe after printing
+    setTimeout(() => {
+      if (iframe && iframe.parentNode) {
+        iframe.parentNode.removeChild(iframe);
+      }
+    }, 500);
+  };
 }
 
 // --- CROSS-TAB ALARM SYSTEM & BROADCAST CHANNEL ---
