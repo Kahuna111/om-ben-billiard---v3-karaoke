@@ -245,8 +245,10 @@ header {
 .main-logo {
     width: 60px;
     height: 60px;
-    object-fit: contain;
-    filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.3));
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 243, 255, 0.4);
+    box-shadow: 0 0 12px rgba(0, 243, 255, 0.3);
 }
 
 .logo-section h1 {

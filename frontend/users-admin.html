@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -186,7 +186,7 @@
                         <span style="font-size: 0.65rem; color: var(--primary-color); font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">${user.role}</span>
                         <div style="display: flex; gap: 0.5rem;">
                             ${user.id !== 1 && String(user.id) !== "1" ? `<button onclick="deleteUser(${user.id})" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.8rem;">Hapus</button>` : ""}
-                            <img src="assets/Logo Baru.jpeg" style="width: 18px; opacity: 0.4;">
+                            <img src="assets/Logo Baru.jpeg" style="width: 18px; height: 18px; opacity: 0.4; border-radius: 50%; object-fit: cover;">
                         </div>
                     </div>
                     <div style="font-size: 1.1rem; font-weight: bold; margin-bottom: 1.2rem; color: var(--text-light);">${user.username}</div>
