@@ -197,7 +197,7 @@ function getWIBDateString(date = new Date()) {
 
 // Root redirect
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "frontend", "login.html"));
+  res.sendFile(path.join(__dirname, "..", "frontend", "check.html"));
 });
 
 // Dedicated clean routes for staff attendance

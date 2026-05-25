@@ -1,10 +1,13 @@
 {
-  "name": "vini-vidi-vici-billiard-root",
-  "version": "1.0.0",
-  "description": "Root for Vini Vidi Vici Billiard POS",
-  "main": "backend/server.js",
+  "name": "om-ben-billiard",
+  "version": "1.0.1",
+  "description": "Om Ben Billiard x V3 Karaoke - POS Desktop App",
+  "main": "main.js",
   "scripts": {
     "start": "cd backend && node server.js",
+    "electron:dev": "electron .",
+    "electron:build": "set CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --win",
+    "electron:build:dir": "set CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --win --dir",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
@@ -16,6 +19,55 @@
     "express": "^4.18.2",
     "mongoose": "^7.6.10"
   },
-  "author": "",
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "asar": false,
+    "appId": "com.omben.billiard",
+    "productName": "Om Ben Billiard",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "taskbar.js",
+      "taskbar.css",
+      "backend/**/*",
+      "frontend/**/*",
+      "!**/node_modules/.cache/**",
+      "!**/node_modules/nodemon/**",
+      "!**/node_modules/.bin/**",
+      "!**/*.md",
+      "!**/*.map"
+    ],
+    "extraResources": [
+      {
+        "from": "backend/data",
+        "to": "data",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "frontend/assets/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Om Ben Billiard"
+    }
+  },
+  "author": "Om Ben Billiard",
   "license": "ISC"
 }

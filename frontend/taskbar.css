@@ -1,0 +1,698 @@
+/* ============================================
+   ELECTRON DESKTOP TASKBAR - Om Ben Billiard
+   Bottom taskbar like iGO-Exambro
+   ============================================ */
+
+/* Ensure body has space for taskbar */
+body.electron-app {
+  padding-bottom: 52px !important;
+}
+
+/* Hide taskbar when printing */
+@media print {
+  #electron-taskbar,
+  .electron-taskbar-spacer {
+    display: none !important;
+  }
+  body.electron-app {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* ===== MAIN TASKBAR ===== */
+#electron-taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: linear-gradient(180deg, rgba(8, 15, 30, 0.95) 0%, rgba(5, 10, 22, 0.98) 100%);
+  border-top: 1px solid rgba(0, 180, 220, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 999999;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  -webkit-app-region: no-drag;
+}
+
+/* ===== LEFT SECTION: App Name ===== */
+.taskbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 240px;
+}
+
+.taskbar-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1.5px solid rgba(0, 200, 255, 0.3);
+  box-shadow: 0 0 8px rgba(0, 200, 255, 0.15);
+}
+
+.taskbar-app-name {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.taskbar-app-name .app-title {
+  color: #e0f0ff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.taskbar-app-name .app-subtitle {
+  color: rgba(160, 190, 220, 0.6);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* Connection status dot */
+.taskbar-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 6px rgba(46, 204, 113, 0.6);
+  animation: taskbarPulse 2s infinite;
+  margin-left: 4px;
+}
+
+.taskbar-status-dot.offline {
+  background: #e74c3c;
+  box-shadow: 0 0 6px rgba(231, 76, 60, 0.6);
+}
+
+@keyframes taskbarPulse {
+  0%, 100% { opacity: 0.7; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* ===== CENTER SECTION: Clock ===== */
+.taskbar-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0px;
+}
+
+.taskbar-clock {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #00e5ff;
+  letter-spacing: 3px;
+  font-family: 'Outfit', 'Consolas', monospace;
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+  line-height: 1.1;
+}
+
+.taskbar-date {
+  font-size: 0.6rem;
+  color: rgba(160, 190, 220, 0.55);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+/* ===== RIGHT SECTION: Action Buttons ===== */
+.taskbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 240px;
+  justify-content: flex-end;
+}
+
+/* Generic taskbar button */
+.taskbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #c0d0e0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  white-space: nowrap;
+  height: 34px;
+}
+
+.taskbar-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.taskbar-btn:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.taskbar-btn .btn-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+/* WiFi Button Styles */
+.taskbar-btn.wifi-btn {
+  border-color: rgba(0, 200, 255, 0.2);
+  color: #00d4ff;
+}
+
+.taskbar-btn.wifi-btn:hover {
+  background: rgba(0, 200, 255, 0.1);
+  border-color: rgba(0, 200, 255, 0.35);
+  box-shadow: 0 0 12px rgba(0, 200, 255, 0.15);
+}
+
+.taskbar-btn.wifi-btn.connected {
+  border-color: rgba(46, 204, 113, 0.25);
+  color: #2ecc71;
+}
+
+.taskbar-btn.wifi-btn.connected:hover {
+  background: rgba(46, 204, 113, 0.1);
+  border-color: rgba(46, 204, 113, 0.35);
+}
+
+/* Reload Button */
+.taskbar-btn.reload-btn {
+  border-color: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+}
+
+.taskbar-btn.reload-btn:hover {
+  background: rgba(250, 204, 21, 0.08);
+  border-color: rgba(250, 204, 21, 0.3);
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.12);
+}
+
+/* Lock Button */
+.taskbar-btn.lock-btn {
+  border-color: rgba(160, 190, 220, 0.2);
+  color: #a0bec8;
+}
+
+.taskbar-btn.lock-btn:hover {
+  background: rgba(160, 190, 220, 0.08);
+  border-color: rgba(160, 190, 220, 0.35);
+  color: #fff;
+}
+
+.taskbar-btn.lock-btn.unlocked {
+  border-color: rgba(250, 204, 21, 0.35);
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.06);
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.12);
+}
+
+.taskbar-btn.lock-btn.unlocked:hover {
+  background: rgba(250, 204, 21, 0.12);
+  border-color: rgba(250, 204, 21, 0.5);
+  color: #fff;
+}
+
+/* Exit Button */
+.taskbar-btn.exit-btn {
+  border-color: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.06);
+}
+
+.taskbar-btn.exit-btn:hover {
+  background: rgba(231, 76, 60, 0.15);
+  border-color: rgba(231, 76, 60, 0.4);
+  box-shadow: 0 0 12px rgba(231, 76, 60, 0.2);
+  color: #ff6b6b;
+}
+
+/* ===== WIFI MODAL ===== */
+.wifi-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 48px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999998;
+  animation: fadeIn 0.2s ease;
+}
+
+.wifi-modal-overlay.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.wifi-modal {
+  background: linear-gradient(145deg, rgba(12, 20, 38, 0.98), rgba(8, 14, 28, 0.99));
+  border: 1px solid rgba(0, 180, 220, 0.2);
+  border-radius: 20px;
+  width: 420px;
+  max-width: 92vw;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 180, 220, 0.08);
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.wifi-modal-header {
+  padding: 20px 24px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wifi-modal-header h3 {
+  color: #e0f0ff;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wifi-modal-header .wifi-close-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #8899aa;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2;
+}
+
+.wifi-modal-header .wifi-close-btn:hover {
+  background: rgba(231, 76, 60, 0.15);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+}
+
+/* Current connection info */
+.wifi-current {
+  padding: 12px 24px;
+  background: rgba(46, 204, 113, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wifi-current .wifi-current-icon {
+  font-size: 1.3rem;
+}
+
+.wifi-current .wifi-current-info {
+  flex: 1;
+}
+
+.wifi-current .wifi-current-label {
+  font-size: 0.65rem;
+  color: rgba(160, 190, 220, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.wifi-current .wifi-current-ssid {
+  color: #2ecc71;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.wifi-current .wifi-current-ssid.disconnected {
+  color: #e74c3c;
+}
+
+/* Network list */
+.wifi-network-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  max-height: 350px;
+}
+
+.wifi-network-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.wifi-network-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.wifi-network-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.wifi-network-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+}
+
+.wifi-network-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.wifi-network-item.active {
+  background: rgba(46, 204, 113, 0.08);
+  border-color: rgba(46, 204, 113, 0.2);
+}
+
+.wifi-signal-icon {
+  font-size: 1.2rem;
+  width: 28px;
+  text-align: center;
+}
+
+.wifi-network-info {
+  flex: 1;
+}
+
+.wifi-network-name {
+  color: #d0e0f0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.wifi-network-detail {
+  color: rgba(160, 190, 220, 0.45);
+  font-size: 0.65rem;
+  margin-top: 1px;
+}
+
+.wifi-signal-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+}
+
+.wifi-signal-bar span {
+  width: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 1px;
+  transition: background 0.2s;
+}
+
+.wifi-signal-bar span.active {
+  background: #00e5ff;
+}
+
+.wifi-signal-bar span:nth-child(1) { height: 4px; }
+.wifi-signal-bar span:nth-child(2) { height: 7px; }
+.wifi-signal-bar span:nth-child(3) { height: 10px; }
+.wifi-signal-bar span:nth-child(4) { height: 14px; }
+
+.wifi-lock-icon {
+  color: rgba(160, 190, 220, 0.35);
+  font-size: 0.7rem;
+}
+
+/* Scanning state */
+.wifi-scanning {
+  text-align: center;
+  padding: 30px 20px;
+  color: rgba(160, 190, 220, 0.5);
+  font-size: 0.85rem;
+}
+
+.wifi-scanning .spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(0, 200, 255, 0.2);
+  border-top-color: #00d4ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* WiFi password input modal */
+.wifi-password-section {
+  padding: 16px 24px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: none;
+}
+
+.wifi-password-section.active {
+  display: block;
+}
+
+.wifi-password-section label {
+  display: block;
+  color: rgba(160, 190, 220, 0.6);
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wifi-password-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.wifi-password-section input {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #e0f0ff;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.wifi-password-section input:focus {
+  border-color: rgba(0, 200, 255, 0.4);
+}
+
+.wifi-password-section .wifi-connect-btn {
+  padding: 8px 18px;
+  background: #00b8d4;
+  color: #0a0f1e;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.wifi-password-section .wifi-connect-btn:hover {
+  background: #00e5ff;
+  box-shadow: 0 0 12px rgba(0, 200, 255, 0.3);
+}
+
+/* Modal footer with scan button */
+.wifi-modal-footer {
+  padding: 10px 24px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wifi-scan-btn {
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #8899aa;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.wifi-scan-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #c0d0e0;
+}
+
+/* ===== EXIT CONFIRMATION MODAL ===== */
+.exit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 48px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999998;
+}
+
+.exit-modal-overlay.active {
+  display: flex;
+}
+
+.exit-modal {
+  background: linear-gradient(145deg, rgba(20, 12, 12, 0.98), rgba(15, 8, 8, 0.99));
+  border: 1px solid rgba(231, 76, 60, 0.25);
+  border-radius: 20px;
+  width: 380px;
+  max-width: 90vw;
+  padding: 28px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(231, 76, 60, 0.08);
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.exit-modal .exit-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  animation: taskbarPulse 2s infinite;
+}
+
+.exit-modal h3 {
+  color: #e74c3c;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  margin-bottom: 8px;
+}
+
+.exit-modal p {
+  color: rgba(200, 180, 180, 0.6);
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.exit-modal .exit-password-group {
+  margin: 16px 0;
+  text-align: left;
+}
+
+.exit-modal .exit-password-group label {
+  display: block;
+  color: rgba(200, 180, 180, 0.5);
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.exit-modal .exit-password-group input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  border-radius: 10px;
+  color: #e0d0d0;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.exit-modal .exit-password-group input:focus {
+  border-color: rgba(231, 76, 60, 0.5);
+}
+
+.exit-modal .exit-error {
+  color: #e74c3c;
+  font-size: 0.75rem;
+  margin-top: 6px;
+  display: none;
+}
+
+.exit-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.exit-modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.exit-modal-actions .exit-cancel-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #8899aa;
+}
+
+.exit-modal-actions .exit-cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #c0d0e0;
+}
+
+.exit-modal-actions .exit-confirm-btn {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+}
+
+.exit-modal-actions .exit-confirm-btn:hover {
+  background: rgba(231, 76, 60, 0.25);
+  border-color: rgba(231, 76, 60, 0.5);
+  color: #ff6b6b;
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
+}
