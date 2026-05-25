@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -397,7 +397,7 @@
 <body class="tv-mode">
     <div class="tv-header">
         <div class="tv-logo-area">
-            <img src="assets/logo.png" alt="Logo" class="tv-logo">
+            <img src="assets/Logo Baru.jpeg" alt="Logo" class="tv-logo">
             <div class="tv-title">
                 <h1>OM BEN BILLIARD & V3 KARAOKE</h1>
                 <p>Live TV Status Monitor</p>
@@ -426,10 +426,10 @@
     </div>
 
     <div class="tv-layout">
-        <!-- 🎱 BILLIARD TABLES COLUMN -->
+        <!-- ðŸŽ± BILLIARD TABLES COLUMN -->
         <div class="tv-column">
             <div class="tv-column-header">
-                <div class="tv-column-title">🎱 AREA MEJA BILLIARD</div>
+                <div class="tv-column-title">ðŸŽ± AREA MEJA BILLIARD</div>
                 <div style="font-size: 0.75rem; color: var(--neon-cyan); font-weight: bold;" id="billiard-summary">0 MEJA</div>
             </div>
             <div class="tv-grid" id="billiard-grid">
@@ -437,10 +437,10 @@
             </div>
         </div>
 
-        <!-- 🎤 KARAOKE ROOMS COLUMN -->
+        <!-- ðŸŽ¤ KARAOKE ROOMS COLUMN -->
         <div class="tv-column">
             <div class="tv-column-header">
-                <div class="tv-column-title">🎤 ROOM KARAOKE V3</div>
+                <div class="tv-column-title">ðŸŽ¤ ROOM KARAOKE V3</div>
                 <div style="font-size: 0.75rem; color: var(--neon-pink); font-weight: bold;" id="karaoke-summary">0 ROOM</div>
             </div>
             <div class="tv-grid" id="karaoke-grid">
@@ -452,10 +452,10 @@
     <!-- Controls at bottom -->
     <div class="tv-controls">
         <button class="tv-btn" onclick="toggleFullscreen()">
-            <span>🖥️</span> Fullscreen
+            <span>ðŸ–¥ï¸</span> Fullscreen
         </button>
         <button class="tv-btn" id="btn-kasir" onclick="window.location.href='index.html'">
-            <span>🚪</span> Kembali ke Kasir
+            <span>ðŸšª</span> Kembali ke Kasir
         </button>
     </div>
 
@@ -508,7 +508,7 @@
         if (roleNow === "tv") {
             const btnKasir = document.getElementById("btn-kasir");
             if (btnKasir) {
-                btnKasir.innerHTML = "<span>🚪</span> Keluar (Logout)";
+                btnKasir.innerHTML = "<span>ðŸšª</span> Keluar (Logout)";
                 btnKasir.onclick = function() {
                     if(typeof logout === 'function') {
                         logout();
@@ -556,7 +556,7 @@
                     let badgeClass = 'badge-available';
                     let timerText = 'READY';
                     let timerClass = 'timer-available';
-                    let customerHtml = '<span style="color: var(--neon-green)">● KOSONG</span>';
+                    let customerHtml = '<span style="color: var(--neon-green)">â— KOSONG</span>';
                     let startHtml = 'Ready to play';
 
                     if (session) {
@@ -571,7 +571,7 @@
                             : calculateTimeDiff(session.startTime);
                         timerText = timer.formatted;
                         
-                        customerHtml = `<span class="tv-cust-name">👤 ${session.customerName}</span>`;
+                        customerHtml = `<span class="tv-cust-name">ðŸ‘¤ ${session.customerName}</span>`;
                         startHtml = `Mulai: ${formatTime(session.startTime)}`;
                     } else if (table.status === 'booked' || tableBooking) {
                         cardClass = 'tv-booked';
@@ -583,7 +583,7 @@
 
                         const bookTime = tableBooking ? formatTime(tableBooking.bookingTime) : 'Hari Ini';
                         const bookCust = tableBooking ? tableBooking.customerName : 'Pelanggan';
-                        customerHtml = `<span class="tv-cust-name">👤 ${bookCust}</span>`;
+                        customerHtml = `<span class="tv-cust-name">ðŸ‘¤ ${bookCust}</span>`;
                         startHtml = `Jam: ${bookTime}`;
                     } else {
                         availCount++;
@@ -626,7 +626,7 @@
                     let badgeClass = 'badge-available';
                     let timerText = 'READY';
                     let timerClass = 'timer-available';
-                    let customerHtml = '<span style="color: var(--neon-green)">● KOSONG</span>';
+                    let customerHtml = '<span style="color: var(--neon-green)">â— KOSONG</span>';
                     let startHtml = 'Ready to sing';
 
                     if (session) {
@@ -641,7 +641,7 @@
                             : calculateTimeDiff(session.startTime);
                         timerText = timer.formatted;
 
-                        customerHtml = `<span class="tv-cust-name">👤 ${session.customerName}</span>`;
+                        customerHtml = `<span class="tv-cust-name">ðŸ‘¤ ${session.customerName}</span>`;
                         startHtml = `Mulai: ${formatTime(session.startTime)}`;
                     } else if (room.status === 'booked' || roomBooking) {
                         cardClass = 'tv-booked';
@@ -653,7 +653,7 @@
 
                         const bookTime = roomBooking ? formatTime(roomBooking.bookingTime) : 'Hari Ini';
                         const bookCust = roomBooking ? roomBooking.customerName : 'Pelanggan';
-                        customerHtml = `<span class="tv-cust-name">👤 ${bookCust}</span>`;
+                        customerHtml = `<span class="tv-cust-name">ðŸ‘¤ ${bookCust}</span>`;
                         startHtml = `Jam: ${bookTime}`;
                     } else {
                         availCount++;
