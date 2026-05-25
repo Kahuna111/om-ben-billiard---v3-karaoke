@@ -36,6 +36,9 @@ const API_BASE = (window.location.protocol === 'file:' || ((window.location.host
 
 // ===== THEME (DARK / LIGHT MODE) =====
 (function initTheme() {
+  if (window.location.href.includes("reservasi.html")) {
+    return; // Reservasi online selalu menggunakan Dark Mode
+  }
   const saved = localStorage.getItem("app_theme");
   if (saved === "light") {
     document.body.classList.add("light-mode");

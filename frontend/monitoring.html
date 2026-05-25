@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -81,7 +81,7 @@
                 // --- 1. BILLIARD TABLES SECTION ---
                 const billiardHeader = document.createElement('div');
                 billiardHeader.style.cssText = 'grid-column: 1/-1; margin-top: 1rem; border-bottom: 2px solid rgba(0, 243, 255, 0.1); padding-bottom: 0.5rem; margin-bottom: 1rem;';
-                billiardHeader.innerHTML = `<h3 style="font-family: var(--font-heading); margin: 0; color: var(--primary-color); font-size: 1.2rem; letter-spacing: 1px;">ðŸŽ± AREA MEJA BILLIARD</h3>`;
+                billiardHeader.innerHTML = `<h3 style="font-family: var(--font-heading); margin: 0; color: var(--primary-color); font-size: 1.2rem; letter-spacing: 1px;">🎱 AREA MEJA BILLIARD</h3>`;
                 container.appendChild(billiardHeader);
 
                 tables.forEach(table => {
@@ -94,7 +94,7 @@
                     let statusLabel = 'Tersedia';
                     let statusColor = '#2ecc71'; // Green (#2ecc71)
                     let timerHtml = '00:00:00';
-                    let detailsHtml = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); font-size: 0.8rem;">ðŸŸ¢ Meja Kosong / Siap digunakan</div>';
+                    let detailsHtml = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); font-size: 0.8rem;">🟢 Meja Kosong / Siap digunakan</div>';
                     
                     if (session) {
                         statusClass = 'active-card';
@@ -148,7 +148,7 @@
                             <div class="table-info">
                                 <span style="font-size: 0.7rem; color: ${statusColor}; font-weight: bold; text-transform: uppercase;">Meja Billiard</span>
                                 <h2>${table.name}</h2>
-                                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">â€¢ ${table.description || 'Standard'}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">• ${table.description || 'Standard'}</div>
                             </div>
                             <span class="status-badge" style="background: ${statusColor}; color: ${statusClass === 'available' ? '#ffffff' : 'var(--bg-dark)'}; font-weight: 800; font-size: 0.7rem;">${statusLabel}</span>
                         </div>
@@ -163,7 +163,7 @@
                 // --- 2. KARAOKE ROOMS SECTION ---
                 const karaokeHeader = document.createElement('div');
                 karaokeHeader.style.cssText = 'grid-column: 1/-1; margin-top: 3rem; border-bottom: 2px solid rgba(236, 0, 140, 0.1); padding-bottom: 0.5rem; margin-bottom: 1rem;';
-                karaokeHeader.innerHTML = `<h3 style="font-family: var(--font-heading); margin: 0; color: #ec008c; font-size: 1.2rem; letter-spacing: 1px;">ðŸŽ¤ ROOM KARAOKE V3</h3>`;
+                karaokeHeader.innerHTML = `<h3 style="font-family: var(--font-heading); margin: 0; color: #ec008c; font-size: 1.2rem; letter-spacing: 1px;">🎤 ROOM KARAOKE V3</h3>`;
                 container.appendChild(karaokeHeader);
 
                 rooms.forEach(room => {
@@ -176,7 +176,7 @@
                     let statusLabel = 'Tersedia';
                     let statusColor = '#2ecc71'; // Green (#2ecc71)
                     let timerHtml = '00:00:00';
-                    let detailsHtml = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); font-size: 0.8rem;">ðŸŸ¢ Ruangan Kosong / Siap digunakan</div>';
+                    let detailsHtml = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); font-size: 0.8rem;">🟢 Ruangan Kosong / Siap digunakan</div>';
                     
                     if (session) {
                         statusClass = 'active-card';
@@ -234,7 +234,7 @@
                             <div class="table-info">
                                 <span style="font-size: 0.7rem; color: ${statusColor}; font-weight: bold; text-transform: uppercase;">Room Karaoke</span>
                                 <h2>Ruang ${room.name}</h2>
-                                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">â€¢ ${room.description || 'Standard'}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">• ${room.description || 'Standard'}</div>
                             </div>
                             <span class="status-badge" style="background: ${statusColor}; color: ${statusClass === 'available' ? '#ffffff' : 'var(--bg-dark)'}; font-weight: 800; font-size: 0.7rem;">${statusLabel}</span>
                         </div>

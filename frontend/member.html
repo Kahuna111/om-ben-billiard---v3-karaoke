@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <script>
@@ -677,20 +677,20 @@
             <div class="action-bar no-print">
                 <div class="search-filter-group">
                     <div class="search-wrapper">
-                        <span class="search-icon">ðŸ”</span>
+                        <span class="search-icon">🔍</span>
                         <input type="text" id="search-member-input" placeholder="Cari ID, Nama, No. HP..." oninput="filterMembers()">
                     </div>
                     <select id="filter-status-select" class="filter-select" onchange="filterMembers()">
-                        <option value="all">ðŸŸ¢ Semua Status</option>
-                        <option value="active">ðŸŸ¢ Status Aktif</option>
-                        <option value="blocked">ðŸ”´ Terblokir / Blacklist</option>
+                        <option value="all">🟢 Semua Status</option>
+                        <option value="active">🟢 Status Aktif</option>
+                        <option value="blocked">🔴 Terblokir / Blacklist</option>
                     </select>
                 </div>
                 <button onclick="openCreateModal()" class="btn btn-primary btn-add-member">
-                    <span>ðŸªª</span> Buat Member Baru
+                    <span>🪪</span> Buat Member Baru
                 </button>
                 <button onclick="resetAllMembers()" class="btn btn-danger btn-reset-member" style="background: #ef4444; border-color: #ef4444; color: white; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>âš ï¸</span> Reset Seluruh Member
+                    <span>⚠️</span> Reset Seluruh Member
                 </button>
             </div>
 
@@ -712,7 +712,7 @@
                             <!-- Injected dynamically -->
                             <tr>
                                 <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 3rem 1rem;">
-                                    âŒ› Memuat data member...
+                                    ⌛ Memuat data member...
                                 </td>
                             </tr>
                         </tbody>
@@ -759,7 +759,7 @@
     <div class="modal" id="id-display-modal">
         <div class="modal-content" style="max-width: 420px; text-align: center;">
             <div class="success-icon-wrapper">
-                <div class="success-checkmark">âœ“</div>
+                <div class="success-checkmark">✓</div>
             </div>
             
             <h2 style="margin-bottom: 0.5rem; font-family: var(--font-heading); color: #2ecc71;">Member Berhasil Terdaftar!</h2>
@@ -789,7 +789,7 @@
 
             <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem;">
                 <button type="button" class="btn btn-primary" onclick="copyCardId()" style="background: var(--accent-gold); border-color: var(--accent-gold);">
-                    ðŸ“‹ Salin ID Member
+                    📋 Salin ID Member
                 </button>
                 <button type="button" class="btn btn-outline" onclick="closeModal('id-display-modal')">
                     Selesai
@@ -808,7 +808,7 @@
 
             <!-- Blacklist / Block Warning Box -->
             <div id="detail-block-warning" class="block-info-box" style="display: none;">
-                <h4>âš ï¸ Member Ini Terblokir!</h4>
+                <h4>⚠️ Member Ini Terblokir!</h4>
                 <div style="font-size: 0.85rem; line-height: 1.4;">
                     <div style="margin-bottom: 0.25rem;"><strong>Alasan:</strong> <span id="detail-block-reason"></span></div>
                     <div style="margin-bottom: 0.25rem;"><strong>Oleh:</strong> <span id="detail-block-by"></span></div>
@@ -880,7 +880,7 @@
 
             <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                 <button type="button" class="btn btn-outline" onclick="copyDetailId()" id="btn-copy-detail" style="color: var(--primary-color); border-color: rgba(0, 243, 255, 0.3);">
-                    ðŸ“‹ Salin ID
+                    📋 Salin ID
                 </button>
                 <button type="button" class="btn btn-primary" onclick="closeModal('detail-modal')">Tutup</button>
             </div>
@@ -916,7 +916,7 @@
                 
                 <!-- Premium Discount percent setter for future release -->
                 <div class="form-group">
-                    <label>Atur Diskon Otomatis (%) â€” <span style="color: var(--accent-gold)">Disiapkan</span></label>
+                    <label>Atur Diskon Otomatis (%) — <span style="color: var(--accent-gold)">Disiapkan</span></label>
                     <input type="number" id="edit-discount" min="0" max="100" placeholder="0" autocomplete="off">
                     <small style="color: var(--text-dim); font-size: 0.75rem; margin-top: 0.25rem; display: block;">
                         Diskon otomatis tersimpan dalam data base untuk pengembangan fitur diskon masa depan.
@@ -934,7 +934,7 @@
     <!-- Modal: Block Member -->
     <div class="modal" id="block-modal">
         <div class="modal-content">
-            <h2 style="margin-bottom: 1rem; font-family: var(--font-heading); color: var(--danger);">âš ï¸ Blokir & Blacklist Member</h2>
+            <h2 style="margin-bottom: 1rem; font-family: var(--font-heading); color: var(--danger);">⚠️ Blokir & Blacklist Member</h2>
             <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.5rem; line-height: 1.4;">
                 Apakah Anda yakin ingin memblokir member ini? Member yang terblokir tidak diperbolehkan menggunakan layanan dan akan muncul sebagai **BLACK-LISTED** di sistem.
             </p>
@@ -977,7 +977,7 @@
                     document.getElementById("member-table-body").innerHTML = `
                         <tr>
                             <td colspan="6" style="text-align: center; color: var(--danger); padding: 3rem 1rem;">
-                                âš ï¸ Server merespons error. Coba muat ulang halaman.
+                                ⚠️ Server merespons error. Coba muat ulang halaman.
                             </td>
                         </tr>
                     `;
@@ -987,14 +987,14 @@
                 document.getElementById("member-table-body").innerHTML = `
                     <tr>
                         <td colspan="6" style="text-align: center; color: var(--danger); padding: 3rem 1rem;">
-                            âš ï¸ Tidak dapat terhubung ke server. Pastikan server backend Anda berjalan di port 3001.
+                            ⚠️ Tidak dapat terhubung ke server. Pastikan server backend Anda berjalan di port 3001.
                         </td>
                     </tr>
                 `;
             }
         }
 
-        // Run immediately â€” script is at bottom of body, DOM is ready
+        // Run immediately — script is at bottom of body, DOM is ready
         loadMembers();
 
         // Hide admin-only features for non-admins
@@ -1010,7 +1010,7 @@
                 body.innerHTML = `
                     <tr>
                         <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 4rem 1rem;">
-                            ðŸ“­ Tidak ada data member yang terdaftar atau cocok dengan pencarian.
+                            📭 Tidak ada data member yang terdaftar atau cocok dengan pencarian.
                         </td>
                     </tr>
                 `;
@@ -1029,20 +1029,20 @@
 
                 const isBlocked = member.status === "blocked";
                 const statusBadge = isBlocked 
-                    ? `<span class="status-pill blocked">ðŸ”´ Terblokir</span>`
-                    : `<span class="status-pill active">ðŸŸ¢ Aktif</span>`;
+                    ? `<span class="status-pill blocked">🔴 Terblokir</span>`
+                    : `<span class="status-pill active">🟢 Aktif</span>`;
 
                 const blockUnblockBtn = isBlocked
-                    ? `<button onclick="confirmUnblockMember(${member.id}, '${member.name}')" class="btn-action btn-unblock" title="Aktifkan Kembali Member">ðŸŸ¢</button>`
-                    : `<button onclick="openBlockModal(${member.id})" class="btn-action btn-block" title="Blokir / Blacklist Member">ðŸ”´</button>`;
+                    ? `<button onclick="confirmUnblockMember(${member.id}, '${member.name}')" class="btn-action btn-unblock" title="Aktifkan Kembali Member">🟢</button>`
+                    : `<button onclick="openBlockModal(${member.id})" class="btn-action btn-block" title="Blokir / Blacklist Member">🔴</button>`;
 
                 // Standardized 8-digit spacing format
                 const formattedId = String(member.id).replace(/(\d{4})(\d{4})/, "$1 $2");
 
                 const adminActions = isAdmin 
-                    ? `<button onclick="openEditModal(${member.id})" class="btn-action btn-edit" title="Edit Profil">âœï¸</button>
+                    ? `<button onclick="openEditModal(${member.id})" class="btn-action btn-edit" title="Edit Profil">✏️</button>
                        ${blockUnblockBtn}
-                       <button onclick="confirmDeleteMember(${member.id}, '${member.name}')" class="btn-action btn-delete" title="Hapus Permanen">ðŸ—‘ï¸</button>`
+                       <button onclick="confirmDeleteMember(${member.id}, '${member.name}')" class="btn-action btn-delete" title="Hapus Permanen">🗑️</button>`
                     : '';
 
                 return `
@@ -1054,7 +1054,7 @@
                         <td data-label="Status">${statusBadge}</td>
                         <td data-label="Aksi" style="text-align: right;">
                             <div class="action-buttons">
-                                <button onclick="viewMemberDetail(${member.id})" class="btn-action btn-detail" title="Detail Riwayat & Profil">ðŸ‘ï¸</button>
+                                <button onclick="viewMemberDetail(${member.id})" class="btn-action btn-detail" title="Detail Riwayat & Profil">👁️</button>
                                 ${adminActions}
                             </div>
                         </td>
@@ -1152,11 +1152,11 @@
 
                     openModal("id-display-modal");
                 } else {
-                    alert("âš ï¸ Gagal mendaftarkan member: " + (result.message || "Terjadi kesalahan"));
+                    alert("⚠️ Gagal mendaftarkan member: " + (result.message || "Terjadi kesalahan"));
                 }
             } catch (err) {
                 console.error("Error creating member:", err);
-                alert("âš ï¸ Gagal mengirim data ke server. Pastikan koneksi aman.");
+                alert("⚠️ Gagal mengirim data ke server. Pastikan koneksi aman.");
             }
         }
 
@@ -1165,7 +1165,7 @@
             if (!currentlySelectedCardId) return;
             navigator.clipboard.writeText(currentlySelectedCardId)
                 .then(() => {
-                    alert("ðŸŽ‰ ID Member (" + currentlySelectedCardId + ") berhasil disalin ke clipboard!");
+                    alert("🎉 ID Member (" + currentlySelectedCardId + ") berhasil disalin ke clipboard!");
                 })
                 .catch(err => {
                     console.error("Gagal menyalin text:", err);
@@ -1180,7 +1180,7 @@
             const rawId = detailIdElement.textContent.replace(/\s+/g, "");
             navigator.clipboard.writeText(rawId)
                 .then(() => {
-                    alert("ðŸŽ‰ ID Member (" + rawId + ") berhasil disalin ke clipboard!");
+                    alert("🎉 ID Member (" + rawId + ") berhasil disalin ke clipboard!");
                 })
                 .catch(err => {
                     console.error("Gagal menyalin text:", err);
@@ -1221,7 +1221,7 @@
                 const isBlocked = member.status === "blocked";
                 const badgeContainer = document.getElementById("detail-status-badge");
                 if (isBlocked) {
-                    badgeContainer.innerHTML = `<span class="status-pill blocked">ðŸ”´ Terblokir</span>`;
+                    badgeContainer.innerHTML = `<span class="status-pill blocked">🔴 Terblokir</span>`;
                     
                     // Show Block info box
                     document.getElementById("detail-block-warning").style.display = "block";
@@ -1237,7 +1237,7 @@
                     }) : "-";
                     document.getElementById("detail-block-at").textContent = blockedDate;
                 } else {
-                    badgeContainer.innerHTML = `<span class="status-pill active">ðŸŸ¢ Aktif</span>`;
+                    badgeContainer.innerHTML = `<span class="status-pill active">🟢 Aktif</span>`;
                     document.getElementById("detail-block-warning").style.display = "none";
                 }
 
@@ -1247,7 +1247,7 @@
                     visitBody.innerHTML = `
                         <tr>
                             <td colspan="3" class="visit-history-empty">
-                                ðŸ“­ Belum ada riwayat kunjungan yang tercatat.
+                                📭 Belum ada riwayat kunjungan yang tercatat.
                             </td>
                         </tr>
                     `;
@@ -1262,8 +1262,8 @@
                         });
                         
                         let typeText = "Billiard";
-                        if (visit.type === "karaoke") typeText = "ðŸŽ¤ Karaoke";
-                        else if (visit.type === "pos") typeText = "ðŸ” F&B / Menu";
+                        if (visit.type === "karaoke") typeText = "🎤 Karaoke";
+                        else if (visit.type === "pos") typeText = "🍔 F&B / Menu";
                         
                         const visitAmount = visit.amount ? ` (${formatRupiah(visit.amount)})` : "";
                         
@@ -1280,11 +1280,11 @@
                 openModal("detail-modal");
             } catch (err) {
                 console.error("Error viewing detail:", err);
-                alert("âš ï¸ Gagal mengambil informasi detail member.");
+                alert("⚠️ Gagal mengambil informasi detail member.");
             }
         }
 
-        // formatRupiah is provided globally by app.js â€” do NOT redeclare here
+        // formatRupiah is provided globally by app.js — do NOT redeclare here
 
         // Open Edit Modal and fill details
         async function openEditModal(id) {
@@ -1305,7 +1305,7 @@
                 openModal("edit-modal");
             } catch (err) {
                 console.error("Error opening edit modal:", err);
-                alert("âš ï¸ Gagal mengambil informasi data member.");
+                alert("⚠️ Gagal mengambil informasi data member.");
             }
         }
 
@@ -1333,13 +1333,13 @@
                 if (result.success) {
                     closeModal("edit-modal");
                     await loadMembers();
-                    alert("ðŸŽ‰ Data member berhasil diperbarui!");
+                    alert("🎉 Data member berhasil diperbarui!");
                 } else {
-                    alert("âš ï¸ Gagal memperbarui data member: " + (result.message || "Terjadi kesalahan"));
+                    alert("⚠️ Gagal memperbarui data member: " + (result.message || "Terjadi kesalahan"));
                 }
             } catch (err) {
                 console.error("Error editing member:", err);
-                alert("âš ï¸ Gagal mengirim data perubahan ke server.");
+                alert("⚠️ Gagal mengirim data perubahan ke server.");
             }
         }
 
@@ -1370,13 +1370,13 @@
                 if (result.success) {
                     closeModal("block-modal");
                     await loadMembers();
-                    alert("âš ï¸ Member telah berhasil diblokir & di-blacklist!");
+                    alert("⚠️ Member telah berhasil diblokir & di-blacklist!");
                 } else {
-                    alert("âš ï¸ Gagal memblokir member: " + (result.message || "Terjadi kesalahan"));
+                    alert("⚠️ Gagal memblokir member: " + (result.message || "Terjadi kesalahan"));
                 }
             } catch (err) {
                 console.error("Error blocking member:", err);
-                alert("âš ï¸ Gagal memproses permintaan blokir ke server.");
+                alert("⚠️ Gagal memproses permintaan blokir ke server.");
             }
         }
 
@@ -1398,13 +1398,13 @@
                 const result = await response.json();
                 if (result.success) {
                     await loadMembers();
-                    alert("ðŸŽ‰ Member berhasil diaktifkan kembali!");
+                    alert("🎉 Member berhasil diaktifkan kembali!");
                 } else {
-                    alert("âš ï¸ Gagal mengaktifkan member: " + (result.message || "Terjadi kesalahan"));
+                    alert("⚠️ Gagal mengaktifkan member: " + (result.message || "Terjadi kesalahan"));
                 }
             } catch (err) {
                 console.error("Error unblocking member:", err);
-                alert("âš ï¸ Gagal mengirim permintaan aktivasi ke server.");
+                alert("⚠️ Gagal mengirim permintaan aktivasi ke server.");
             }
         }
 
@@ -1413,7 +1413,7 @@
             const role = localStorage.getItem("auth_role");
             
             // Re-verify warning
-            const confirmation = confirm(`âš ï¸ PERINGATAN: Menghapus member "${name}" akan menghapus secara PERMANEN seluruh riwayat & keanggotaan dari database!\n\nApakah Anda yakin ingin melanjutkan?`);
+            const confirmation = confirm(`⚠️ PERINGATAN: Menghapus member "${name}" akan menghapus secara PERMANEN seluruh riwayat & keanggotaan dari database!\n\nApakah Anda yakin ingin melanjutkan?`);
             if (confirmation) {
                 handleDeleteMember(id);
             }
@@ -1429,24 +1429,24 @@
                 const result = await response.json();
                 if (response.ok && result.success) {
                     await loadMembers();
-                    alert("ðŸ—‘ï¸ Member telah berhasil dihapus secara permanen!");
+                    alert("🗑️ Member telah berhasil dihapus secara permanen!");
                 } else {
-                    alert("âš ï¸ Gagal menghapus member: " + (result.message || "Anda tidak memiliki wewenang atau terjadi kesalahan."));
+                    alert("⚠️ Gagal menghapus member: " + (result.message || "Anda tidak memiliki wewenang atau terjadi kesalahan."));
                 }
             } catch (err) {
                 console.error("Error deleting member:", err);
-                alert("âš ï¸ Gagal mengirim permintaan penghapusan ke server.");
+                alert("⚠️ Gagal mengirim permintaan penghapusan ke server.");
             }
         }
 
         // Double confirmation and request reset to server
         async function resetAllMembers() {
-            const firstConfirm = confirm("âš ï¸ PERINGATAN KRITIS: Anda akan menghapus SELURUH data member di sistem! Tindakan ini TIDAK dapat dibatalkan.\\n\\nApakah Anda benar-benar yakin ingin melanjutkan?");
+            const firstConfirm = confirm("⚠️ PERINGATAN KRITIS: Anda akan menghapus SELURUH data member di sistem! Tindakan ini TIDAK dapat dibatalkan.\\n\\nApakah Anda benar-benar yakin ingin melanjutkan?");
             if (!firstConfirm) return;
 
-            const secondConfirm = prompt("ðŸ”’ KONFIRMASI KEAMANAN GANDA:\\n\\nUntuk menghapus seluruh data member secara permanen, silakan ketik kata 'RESET' di bawah ini:");
+            const secondConfirm = prompt("🔒 KONFIRMASI KEAMANAN GANDA:\\n\\nUntuk menghapus seluruh data member secara permanen, silakan ketik kata 'RESET' di bawah ini:");
             if (secondConfirm !== "RESET") {
-                alert("âŒ Konfirmasi gagal. Kata kunci salah atau dibatalkan.");
+                alert("❌ Konfirmasi gagal. Kata kunci salah atau dibatalkan.");
                 return;
             }
 
@@ -1458,13 +1458,13 @@
                 const result = await response.json();
                 if (response.ok && result.success) {
                     await loadMembers();
-                    alert("ðŸ—‘ï¸ SELURUH data member berhasil direset dan dihapus secara permanen!");
+                    alert("🗑️ SELURUH data member berhasil direset dan dihapus secara permanen!");
                 } else {
-                    alert("âš ï¸ Gagal mereset member: " + (result.message || "Terjadi kesalahan."));
+                    alert("⚠️ Gagal mereset member: " + (result.message || "Terjadi kesalahan."));
                 }
             } catch (err) {
                 console.error("Error resetting members:", err);
-                alert("âš ï¸ Gagal mengirim permintaan reset ke server.");
+                alert("⚠️ Gagal mengirim permintaan reset ke server.");
             }
         }
 

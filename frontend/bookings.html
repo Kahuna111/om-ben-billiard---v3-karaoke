@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -88,7 +88,7 @@
         <div id="admin-booking-toggle-card" style="display: none; background: rgba(20, 20, 35, 0.8); border: 1.5px solid rgba(189, 147, 249, 0.3); border-radius: 20px; padding: 1.2rem 1.5rem; margin-bottom: 2rem; backdrop-filter: blur(12px);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 0.8rem;">
-                    <span style="font-size: 1.6rem;">âš™ï¸</span>
+                    <span style="font-size: 1.6rem;">⚙️</span>
                     <div>
                         <h3 style="color: #bd93f9; font-size: 1.05rem; margin: 0; font-family: var(--font-heading);">STATUS BOOKING ONLINE</h3>
                         <p style="font-size: 0.75rem; color: var(--text-dim); margin: 2px 0 0 0;">Atur ketersediaan sistem booking online bagi pelanggan umum.</p>
@@ -138,8 +138,8 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                     <h2 id="list-title" style="font-family: var(--font-heading); margin: 0;">Daftar Reservasi Hari Ini</h2>
                     <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-outline" id="btn-history-bookings" style="width: auto; padding: 0.5rem 1rem; font-size: 0.8rem; color: var(--accent-gold); border-color: rgba(240,192,64,0.3); font-weight: bold;" onclick="openHistoryModal()">ðŸ“œ Histori</button>
-                        <button class="btn btn-outline" id="btn-reset-bookings" style="width: auto; padding: 0.5rem 1rem; font-size: 0.8rem; color: var(--danger); border-color: rgba(231,76,60,0.3); font-weight: bold; display: none;" onclick="resetBookings()">ðŸ—‘ï¸ Reset</button>
+                        <button class="btn btn-outline" id="btn-history-bookings" style="width: auto; padding: 0.5rem 1rem; font-size: 0.8rem; color: var(--accent-gold); border-color: rgba(240,192,64,0.3); font-weight: bold;" onclick="openHistoryModal()">📜 Histori</button>
+                        <button class="btn btn-outline" id="btn-reset-bookings" style="width: auto; padding: 0.5rem 1rem; font-size: 0.8rem; color: var(--danger); border-color: rgba(231,76,60,0.3); font-weight: bold; display: none;" onclick="resetBookings()">🗑️ Reset</button>
                     </div>
                 </div>
                 
@@ -175,7 +175,7 @@
 
     <script>
         window.onerror = function(msg, url, line, col, err) {
-            console.error(`âš ï¸ JS ERROR: ${msg}\nLine: ${line}:${col}\nURL: ${url}`);
+            console.error(`⚠️ JS ERROR: ${msg}\nLine: ${line}:${col}\nURL: ${url}`);
             return false;
         };
 
@@ -244,7 +244,7 @@
                 badge.style.color = '#2ecc71';
                 badge.style.border = '1px solid rgba(46, 204, 113, 0.4)';
                 badge.style.boxShadow = '0 0 15px rgba(46, 204, 113, 0.2)';
-                badge.textContent = 'ðŸŸ¢ BOOKING AKTIF';
+                badge.textContent = '🟢 BOOKING AKTIF';
                 
                 // Styling active Buka button, inactive Tutup button
                 btnOpen.style.opacity = '1';
@@ -259,7 +259,7 @@
                 badge.style.color = '#e74c3c';
                 badge.style.border = '1px solid rgba(231, 76, 60, 0.4)';
                 badge.style.boxShadow = '0 0 15px rgba(231, 76, 60, 0.2)';
-                badge.textContent = 'ðŸ”´ BOOKING TUTUP';
+                badge.textContent = '🔴 BOOKING TUTUP';
                 
                 // Styling active Tutup button, inactive Buka button
                 btnClose.style.opacity = '1';
@@ -274,8 +274,8 @@
 
         async function toggleBookingStatus(isOpen) {
             const confirmMsg = isOpen 
-                ? "ðŸ”’ KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MEMBUKA layanan booking online?\n\nPelanggan akan dapat membuat reservasi online baru secara instan."
-                : "âš ï¸ KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENUTUP layanan booking online?\n\nPelanggan tidak akan bisa melakukan reservasi online baru hari ini!";
+                ? "🔒 KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MEMBUKA layanan booking online?\n\nPelanggan akan dapat membuat reservasi online baru secara instan."
+                : "⚠️ KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENUTUP layanan booking online?\n\nPelanggan tidak akan bisa melakukan reservasi online baru hari ini!";
                 
             if (!confirm(confirmMsg)) return;
 
@@ -293,7 +293,7 @@
                 });
                 const verifyData = await verifyRes.json();
                 if (!verifyData.success) {
-                    alert("âŒ VERIFIKASI GAGAL: Kata sandi Admin yang dimasukkan salah!");
+                    alert("❌ VERIFIKASI GAGAL: Kata sandi Admin yang dimasukkan salah!");
                     return;
                 }
             }
@@ -331,7 +331,7 @@
                     banner.style.color = '#e74c3c';
                     banner.style.fontSize = '0.9rem';
                     banner.style.lineHeight = '1.5';
-                    banner.innerHTML = `<strong>âš ï¸ Koneksi API Gagal!</strong><br>Sistem tidak dapat memuat data meja/ruangan. Pastikan server backend Anda aktif di port 3001 dan database cloud terhubung.`;
+                    banner.innerHTML = `<strong>⚠️ Koneksi API Gagal!</strong><br>Sistem tidak dapat memuat data meja/ruangan. Pastikan server backend Anda aktif di port 3001 dan database cloud terhubung.`;
                     formCard.insertBefore(banner, formCard.firstChild);
                 }
                 return;
@@ -345,7 +345,7 @@
                 const opt = document.createElement('option');
                 opt.value = `table|${t.id}`;
                 const statusText = t.status === 'occupied' ? 'Bermain' : 'Siap';
-                opt.textContent = `ðŸŽ± Meja ${t.id} (${statusText})`;
+                opt.textContent = `🎱 Meja ${t.id} (${statusText})`;
                 select.appendChild(opt);
             });
 
@@ -354,7 +354,7 @@
                 const opt = document.createElement('option');
                 opt.value = `room|${r.id}`;
                 const statusText = r.status === 'occupied' ? 'Digunakan' : 'Siap';
-                opt.textContent = `ðŸŽ¤ Ruang ${r.name} (${statusText})`;
+                opt.textContent = `🎤 Ruang ${r.name} (${statusText})`;
                 select.appendChild(opt);
             });
         }
@@ -490,7 +490,7 @@
 
                 const formattedMemberId = b.memberId ? String(b.memberId).replace(/(\d{4})(\d{4})/, "$1 $2") : "";
                 const memberBadge = b.memberId 
-                    ? `<span style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; margin-left: 0.5rem; letter-spacing: 0.5px;">ðŸ†” Member: ${formattedMemberId}</span>`
+                    ? `<span style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; margin-left: 0.5rem; letter-spacing: 0.5px;">🆔 Member: ${formattedMemberId}</span>`
                     : '';
 
                 item.innerHTML = `
@@ -501,9 +501,9 @@
                             ${memberBadge}
                         </div>
                         <div style="color: var(--text-dim); font-size: 0.85rem;">
-                            ðŸ“ ${targetName} | â° ${date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} - ${date.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}
+                            📍 ${targetName} | ⏰ ${date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} - ${date.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}
                         </div>
-                        ${b.notes ? `<div style="font-size: 0.75rem; color: var(--accent-gold); margin-top: 0.4rem;">ðŸ“ ${b.notes}</div>` : ''}
+                        ${b.notes ? `<div style="font-size: 0.75rem; color: var(--accent-gold); margin-top: 0.4rem;">📝 ${b.notes}</div>` : ''}
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
                         <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="checkInBooking('${b.id}', '${b.targetType}', '${b.targetId}', '${b.customerName.replace(/'/g, "\\'")}', '${b.memberId || ''}')">Mulai Sewa</button>
@@ -597,7 +597,7 @@
 
         // Admin: Reset all active bookings
         async function resetBookings() {
-            if (!confirm("âš ï¸ KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENGHAPUS SEMUA DATA RESERVASI AKTIF?\n\nTindakan ini bersifat permanen dan tidak dapat dibatalkan!")) return;
+            if (!confirm("⚠️ KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENGHAPUS SEMUA DATA RESERVASI AKTIF?\n\nTindakan ini bersifat permanen dan tidak dapat dibatalkan!")) return;
             
             const pass = await promptAdminPassword("Masukkan kata sandi Admin Anda untuk menghapus seluruh data reservasi:");
             if (pass === null) return;
@@ -612,7 +612,7 @@
             });
             const verifyData = await verifyRes.json();
             if (!verifyData.success) {
-                alert("âŒ VERIFIKASI GAGAL: Kata sandi Admin yang dimasukkan salah!");
+                alert("❌ VERIFIKASI GAGAL: Kata sandi Admin yang dimasukkan salah!");
                 return;
             }
             
@@ -645,7 +645,7 @@
 
         // Admin: Delete single history item
         async function deleteHistoryItem(id) {
-            if (!confirm('âš ï¸ Hapus riwayat reservasi ini secara permanen?')) return;
+            if (!confirm('⚠️ Hapus riwayat reservasi ini secara permanen?')) return;
             
             try {
                 const res = await deleteData(`/bookings/history/${id}`);
@@ -662,7 +662,7 @@
 
         // Admin: Reset all history items
         async function resetHistory() {
-            if (!confirm('âš ï¸ KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENGHAPUS SELURUH RIWAYAT RESERVASI?\n\nTindakan ini bersifat permanen dan tidak dapat dibatalkan!')) return;
+            if (!confirm('⚠️ KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENGHAPUS SELURUH RIWAYAT RESERVASI?\n\nTindakan ini bersifat permanen dan tidak dapat dibatalkan!')) return;
             
             const pass = await promptAdminPassword("Masukkan kata sandi Admin Anda untuk menghapus seluruh riwayat:");
             if (pass === null) return;
@@ -677,7 +677,7 @@
             });
             const verifyData = await verifyRes.json();
             if (!verifyData.success) {
-                alert('âŒ VERIFIKASI GAGAL: Kata sandi Admin salah!');
+                alert('❌ VERIFIKASI GAGAL: Kata sandi Admin salah!');
                 return;
             }
 
@@ -721,7 +721,7 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="${isAdmin ? 6 : 5}" style="text-align: center; padding: 3rem; color: var(--text-dim);">
-                            ðŸƒ Belum ada riwayat reservasi (check-in / batal).
+                            🍃 Belum ada riwayat reservasi (check-in / batal).
                         </td>
                     </tr>
                 `;
@@ -747,7 +747,7 @@
                     : `<span style="background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 0.7rem; text-transform: uppercase;">Batal</span>`;
 
                 const deleteColHtml = isAdmin 
-                    ? `<td style="padding: 1rem 0.8rem; text-align: center;"><button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: var(--danger); border-color: rgba(231,76,60,0.2);" onclick="deleteHistoryItem('${h.id}')">ðŸ—‘ï¸ Hapus</button></td>`
+                    ? `<td style="padding: 1rem 0.8rem; text-align: center;"><button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: var(--danger); border-color: rgba(231,76,60,0.2);" onclick="deleteHistoryItem('${h.id}')">🗑️ Hapus</button></td>`
                     : '';
 
                 tbody.innerHTML += `
@@ -780,7 +780,7 @@
     <div class="modal" id="history-modal" style="display: none; z-index: 100000; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);">
         <div class="modal-content" style="max-width: 850px; width: 90%; background: var(--card-bg); border: 1.5px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; backdrop-filter: blur(20px); position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
             <h2 style="font-family: var(--font-heading); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; color: var(--accent-gold); font-size: 1.6rem; letter-spacing: 0.5px;">
-                ðŸ“œ Histori Reservasi (Check-in & Batal)
+                📜 Histori Reservasi (Check-in & Batal)
             </h2>
             <div style="max-height: 400px; overflow-y: auto; margin-bottom: 2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); padding: 0.5rem;">
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
@@ -800,7 +800,7 @@
             </div>
             <div style="display: flex; gap: 1rem; justify-content: space-between; align-items: center; width: 100%;">
                 <div>
-                    <button type="button" class="btn btn-outline" id="btn-reset-history" style="display: none; width: auto; padding: 0.6rem 1.5rem; border-radius: 12px; font-weight: bold; color: var(--danger); border-color: rgba(231,76,60,0.3);" onclick="resetHistory()">ðŸ—‘ï¸ Kosongkan Histori</button>
+                    <button type="button" class="btn btn-outline" id="btn-reset-history" style="display: none; width: auto; padding: 0.6rem 1.5rem; border-radius: 12px; font-weight: bold; color: var(--danger); border-color: rgba(231,76,60,0.3);" onclick="resetHistory()">🗑️ Kosongkan Histori</button>
                 </div>
                 <div style="display: flex; gap: 1rem;">
                     <button type="button" class="btn btn-outline" id="close-history-modal-btn" style="width: auto; padding: 0.6rem 2.5rem; border-radius: 12px; font-weight: bold; color: white;" onclick="closeHistoryModal()">Tutup</button>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -331,17 +331,17 @@
         <!-- Area Tab Switching -->
         <div class="tab-navigation">
             <button class="tab-btn active-billiard" id="tab-billiard" onclick="switchArea('billiard')">
-                ðŸŽ± BILLIARD AREA
+                🎱 BILLIARD AREA
             </button>
             <button class="tab-btn" id="tab-karaoke" onclick="switchArea('karaoke')">
-                ðŸŽ¤ KARAOKE ROOMS
+                🎤 KARAOKE ROOMS
             </button>
         </div>
 
         <!-- Realtime Status View -->
         <section class="status-container">
             <div class="grid-header">
-                <h3 id="area-title">ðŸŽ± Billiard Area</h3>
+                <h3 id="area-title">🎱 Billiard Area</h3>
                 <div class="availability-badge">
                     <div class="badge-dot"><span class="dot free"></span> Tersedia</div>
                     <div class="badge-dot"><span class="dot active"></span> Digunakan</div>
@@ -359,11 +359,11 @@
             <!-- Left: Reservasi Form -->
             <div class="booking-panel" id="booking-form-wrapper">
                 <h2 style="font-family: var(--font-heading); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                    âœï¸ Formulir Reservasi
+                    ✍️ Formulir Reservasi
                 </h2>
                 
                 <div class="callout-box">
-                    <span>ðŸ’¡</span>
+                    <span>💡</span>
                     <p><strong>PENTING:</strong> Harap datang tepat waktu! Reservasi otomatis dibatalkan oleh kasir jika Anda terlambat lebih dari 15 menit dari jam kedatangan yang dipesan.</p>
                 </div>
 
@@ -386,8 +386,8 @@
                         <div class="form-group">
                             <label for="c-type">Tipe Layanan</label>
                             <select id="c-type" onchange="populateTargets()" required>
-                                <option value="table">ðŸŽ± Billiard Table</option>
-                                <option value="room">ðŸŽ¤ Karaoke Room</option>
+                                <option value="table">🎱 Billiard Table</option>
+                                <option value="room">🎤 Karaoke Room</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -411,7 +411,7 @@
                     <!-- Keamanan Ganda (Human Verification Captcha) -->
                     <div class="form-group" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 12px; margin-top: 1rem; margin-bottom: 1.5rem;">
                         <label style="color: var(--accent-gold); display: flex; align-items: center; gap: 0.4rem; font-weight: bold; font-size: 0.85rem; margin-bottom: 0.5rem;">
-                            ðŸ›¡ï¸ KEAMANAN GANDA (Verifikasi Anti-Spam)
+                            🛡️ KEAMANAN GANDA (Verifikasi Anti-Spam)
                         </label>
                         <div style="display: flex; gap: 1rem; align-items: center;">
                             <div id="captcha-question" style="background: rgba(255,255,255,0.08); padding: 0.6rem 1rem; border-radius: 8px; font-weight: bold; font-family: monospace; font-size: 1.1rem; letter-spacing: 1px; color: white;">
@@ -419,13 +419,13 @@
                             </div>
                             <input type="number" id="captcha-answer" placeholder="Hasil..." style="flex: 1; padding: 0.6rem 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 8px; color: white; text-align: center; font-weight: bold; font-size: 1rem; font-family: inherit;" required>
                             <button type="button" class="btn btn-outline" style="width: auto; padding: 0.6rem 0.8rem; margin: 0; font-size: 0.9rem;" onclick="generateCaptcha()">
-                                ðŸ”„
+                                🔄
                             </button>
                         </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem; font-size: 1.1rem; letter-spacing: 0.5px;">
-                        KIRIM RESERVASI SEKARANG âš¡
+                        KIRIM RESERVASI SEKARANG ⚡
                     </button>
                 </form>
             </div>
@@ -433,7 +433,7 @@
             <!-- Right: Schedule List -->
             <div class="info-panel">
                 <h2 style="font-family: var(--font-heading); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                    ðŸ“… Jadwal Booking Hari Ini
+                    📅 Jadwal Booking Hari Ini
                 </h2>
                 
                 <div id="client-schedule-list" style="max-height: 480px; overflow-y: auto; padding-right: 0.5rem;">
@@ -471,7 +471,7 @@
                             : "Maaf, saat ini Om Ben Billiard & V3 Karaoke sedang **tidak menerima booking online baru** karena layanan booking online sedang dinonaktifkan sementara oleh Admin.";
                         wrapper.innerHTML = `
                             <div style="background: rgba(231, 76, 60, 0.05); border: 1.5px dashed rgba(231, 76, 60, 0.4); border-radius: 20px; padding: 2.5rem; text-align: center; box-shadow: 0 0 35px rgba(231,76,60,0.1); margin-top: 1rem;">
-                                <div style="font-size: 3.5rem; margin-bottom: 1rem; animation: pulse 2s infinite;">ðŸ”’</div>
+                                <div style="font-size: 3.5rem; margin-bottom: 1rem; animation: pulse 2s infinite;">🔒</div>
                                 <h2 style="color: #e74c3c; font-family: var(--font-heading); margin-bottom: 1rem; font-weight: 800; text-shadow: 0 0 15px rgba(231,76,60,0.2);">${titleText}</h2>
                                 <p style="color: var(--text-light); font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.8rem;">
                                     ${descriptionText}
@@ -526,11 +526,11 @@
             if (area === 'billiard') {
                 btnBilliard.className = 'tab-btn active-billiard';
                 btnKaraoke.className = 'tab-btn';
-                title.innerHTML = 'ðŸŽ± Billiard Area';
+                title.innerHTML = '🎱 Billiard Area';
             } else {
                 btnBilliard.className = 'tab-btn';
                 btnKaraoke.className = 'tab-btn active-karaoke';
-                title.innerHTML = 'ðŸŽ¤ Karaoke Rooms';
+                title.innerHTML = '🎤 Karaoke Rooms';
             }
             renderRealtimeGrid();
         }
@@ -585,7 +585,7 @@
                     const opt = document.createElement('option');
                     opt.value = t.id;
                     const suffix = (t.status !== 'available') ? ` (${t.status === 'occupied' ? 'Sedang Main' : 'Booked'})` : ' (Tersedia)';
-                    opt.textContent = `ðŸŽ± Meja ${t.id}${suffix}`;
+                    opt.textContent = `🎱 Meja ${t.id}${suffix}`;
                     targetSelect.appendChild(opt);
                 });
             } else {
@@ -594,7 +594,7 @@
                     const opt = document.createElement('option');
                     opt.value = r.id;
                     const suffix = (r.status !== 'available') ? ` (${r.status === 'occupied' ? 'Sedang Main' : 'Booked'})` : ' (Tersedia)';
-                    opt.textContent = `ðŸŽ¤ Ruang ${r.name}${suffix}`;
+                    opt.textContent = `🎤 Ruang ${r.name}${suffix}`;
                     targetSelect.appendChild(opt);
                 });
             }
@@ -616,7 +616,7 @@
             if (todayBookings.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 3rem; color: var(--text-dim);">
-                        ðŸƒ Belum ada jadwal booking hari ini.<br>Mari jadilah yang pertama memesan!
+                        🍃 Belum ada jadwal booking hari ini.<br>Mari jadilah yang pertama memesan!
                     </div>
                 `;
                 return;
@@ -690,7 +690,7 @@
                 console.log("[Reservasi] Value is not numeric");
                 memberFeedback.style.display = 'block';
                 memberFeedback.style.color = '#ef4444';
-                memberFeedback.textContent = 'âš ï¸ ID Member harus berupa angka!';
+                memberFeedback.textContent = '⚠️ ID Member harus berupa angka!';
                 memberInput.style.borderColor = '#ef4444';
                 isMemberBlocked = true;
                 if (submitBtn) submitBtn.disabled = true;
@@ -699,7 +699,7 @@
 
             memberFeedback.style.display = 'block';
             memberFeedback.style.color = 'var(--text-dim)';
-            memberFeedback.textContent = 'â³ Memeriksa status member...';
+            memberFeedback.textContent = '⏳ Memeriksa status member...';
             memberInput.style.borderColor = '';
 
             try {
@@ -716,13 +716,13 @@
                     console.log("[Reservasi] Member found:", m);
                     if (m.status === 'blocked') {
                         memberFeedback.style.color = '#ef4444';
-                        memberFeedback.textContent = `âŒ ID Member DIBLOKIR! Alasan: ${m.blockReason || 'Tidak ada alasan'}`;
+                        memberFeedback.textContent = `❌ ID Member DIBLOKIR! Alasan: ${m.blockReason || 'Tidak ada alasan'}`;
                         memberInput.style.borderColor = '#ef4444';
                         isMemberBlocked = true;
                         if (submitBtn) submitBtn.disabled = true;
                     } else {
                         memberFeedback.style.color = '#10b981';
-                        memberFeedback.textContent = `âœ… Member Aktif: ${m.name}`;
+                        memberFeedback.textContent = `✅ Member Aktif: ${m.name}`;
                         memberInput.style.borderColor = '#10b981';
                         if (nameInput) nameInput.value = m.name;
                         isMemberBlocked = false;
@@ -731,7 +731,7 @@
                 } else {
                     console.log("[Reservasi] Member not found");
                     memberFeedback.style.color = '#ef4444';
-                    memberFeedback.textContent = 'âŒ ID Member tidak terdaftar!';
+                    memberFeedback.textContent = '❌ ID Member tidak terdaftar!';
                     memberInput.style.borderColor = '#ef4444';
                     isMemberBlocked = false;
                     if (submitBtn) submitBtn.disabled = false;
@@ -739,7 +739,7 @@
             } catch (err) {
                 console.error("[Reservasi] Error caught in try-catch:", err);
                 memberFeedback.style.color = '#ef4444';
-                memberFeedback.textContent = 'âš ï¸ Gagal memeriksa member ke server.';
+                memberFeedback.textContent = '⚠️ Gagal memeriksa member ke server.';
                 memberInput.style.borderColor = '#ef4444';
                 isMemberBlocked = false;
                 if (submitBtn) submitBtn.disabled = false;
@@ -769,7 +769,7 @@
                 if (memberFeedback) {
                     memberFeedback.style.display = 'block';
                     memberFeedback.style.color = '#f59e0b';
-                    memberFeedback.textContent = 'â³ Menunggu 8 digit ID...';
+                    memberFeedback.textContent = '⏳ Menunggu 8 digit ID...';
                 }
                 memberInput.style.borderColor = '#f59e0b';
                 isMemberBlocked = true;
@@ -784,17 +784,17 @@
             // Dynamic CAPTCHA validation
             const userAnswerVal = document.getElementById('captcha-answer').value;
             if (!userAnswerVal) {
-                alert('ðŸ›¡ï¸ Harap isi jawaban Keamanan Ganda terlebih dahulu!');
+                alert('🛡️ Harap isi jawaban Keamanan Ganda terlebih dahulu!');
                 return;
             }
             if (parseInt(userAnswerVal) !== captchaAnswer) {
-                alert('âŒ Verifikasi Keamanan Ganda Gagal! Hasil penjumlahan salah. Silakan coba lagi.');
+                alert('❌ Verifikasi Keamanan Ganda Gagal! Hasil penjumlahan salah. Silakan coba lagi.');
                 generateCaptcha();
                 return;
             }
 
             if (isMemberBlocked) {
-                alert('âš ï¸ Maaf, reservasi tidak dapat dilanjutkan karena ID Member diblokir atau format tidak valid!');
+                alert('⚠️ Maaf, reservasi tidak dapat dilanjutkan karena ID Member diblokir atau format tidak valid!');
                 return;
             }
 
@@ -821,7 +821,7 @@
             const res = await postData('/bookings', data);
             if (res && res.success !== false) {
                 const unitLabel = targetType === 'table' ? 'Meja ' + targetId : 'Ruangan ' + targetId;
-                alert(`ðŸŽ‰ Reservasi berhasil dibuat!\n\nAtas nama: ${customerName}\nUnit: ${unitLabel}\n\nSilakan datang tepat waktu ya! Terima kasih.`);
+                alert(`🎉 Reservasi berhasil dibuat!\n\nAtas nama: ${customerName}\nUnit: ${unitLabel}\n\nSilakan datang tepat waktu ya! Terima kasih.`);
                 document.getElementById('client-booking-form').reset();
                 if (document.getElementById('member-feedback')) {
                     document.getElementById('member-feedback').style.display = 'none';

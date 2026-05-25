@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -238,7 +238,7 @@
 
       <section>
         <div class="alert-box">
-          <strong>âš ï¸ INFORMASI PENTING KEAMANAN DATA:</strong><br />
+          <strong>⚠️ INFORMASI PENTING KEAMANAN DATA:</strong><br />
           Sistem database POS disimpan lokal dalam file server
           <code>db.json</code>. Agar data transaksi harian Anda 100% aman dari
           resiko kehilangan akibat eror sistem, pembaruan aplikasi, atau reset
@@ -268,7 +268,7 @@
                   margin-bottom: 0.3rem;
                 "
               >
-                âš™ï¸ KONTROL OPERASIONAL TOKO
+                ⚙️ KONTROL OPERASIONAL TOKO
               </h3>
               <p
                 style="
@@ -320,7 +320,7 @@
               <h3
                 style="color: var(--booking-header-color); font-size: 1.1rem; margin-bottom: 0.3rem"
               >
-                âš™ï¸ KONTROL RESERVASI ONLINE
+                ⚙️ KONTROL RESERVASI ONLINE
               </h3>
               <p
                 style="
@@ -376,14 +376,14 @@
               style="width: auto; background: #2ecc71; border-color: #2ecc71"
               onclick="createBackup()"
             >
-              ðŸ’¾ BUAT BACKUP DI SERVER
+              💾 BUAT BACKUP DI SERVER
             </button>
             <button
               class="btn btn-outline"
               style="width: auto"
               onclick="loadData()"
             >
-              â†» REFRESH
+              ↻ REFRESH
             </button>
           </div>
         </div>
@@ -448,7 +448,7 @@
                 padding: 0.6rem 0;
                 width: 100%;
               "
-              >ðŸ“¥ Unduh db.json Sekarang</a
+              >📥 Unduh db.json Sekarang</a
             >
           </div>
 
@@ -479,7 +479,7 @@
               onclick="document.getElementById('upload-db-file').click()"
               style="width: 100%; border-color: #e74c3c; color: #e74c3c"
             >
-              ðŸ“ Pilih File & Impor
+              📁 Pilih File & Impor
             </button>
           </div>
 
@@ -513,7 +513,7 @@
                 color: var(--accent-gold);
               "
             >
-              âš¡ Pulihkan Dari Cache Browser
+              ⚡ Pulihkan Dari Cache Browser
             </button>
           </div>
         </div>
@@ -736,7 +736,7 @@
         const formattedTime = new Date(time).toLocaleString("id-ID");
         if (
           confirm(
-            `!!! PEMULIHAN CACHE BROWSER !!!\n\nMenemukan data bayangan yang tersinkron otomatis pada:\nðŸ“… ${formattedTime}\n\nApakah Anda yakin ingin memulihkan database server menggunakan data cache browser ini?`,
+            `!!! PEMULIHAN CACHE BROWSER !!!\n\nMenemukan data bayangan yang tersinkron otomatis pada:\n📅 ${formattedTime}\n\nApakah Anda yakin ingin memulihkan database server menggunakan data cache browser ini?`,
           )
         ) {
           try {
@@ -781,13 +781,13 @@
 
         if (isOpen) {
           badge.className = "status-badge-custom open";
-          badge.textContent = "ðŸŸ¢ BOOKING BUKA";
+          badge.textContent = "🟢 BOOKING BUKA";
 
           btnOpen.className = "btn btn-status btn-status-open active";
           btnClose.className = "btn btn-status btn-status-close inactive";
         } else {
           badge.className = "status-badge-custom closed";
-          badge.textContent = "ðŸ”´ BOOKING TUTUP";
+          badge.textContent = "🔴 BOOKING TUTUP";
 
           btnOpen.className = "btn btn-status btn-status-open inactive";
           btnClose.className = "btn btn-status btn-status-close active";
@@ -797,8 +797,8 @@
       async function toggleBookingStatus(isOpen) {
         // Keamanan Ganda: Konfirmasi berlapis
         const confirmMsg = isOpen
-          ? "ðŸ”’ KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MEMBUKA layanan booking online?\n\nPelanggan akan dapat membuat reservasi online baru secara instan."
-          : "âš ï¸ KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENUTUP layanan booking online?\n\nPelanggan tidak akan bisa melakukan reservasi online baru hari ini!";
+          ? "🔒 KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MEMBUKA layanan booking online?\n\nPelanggan akan dapat membuat reservasi online baru secara instan."
+          : "⚠️ KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENUTUP layanan booking online?\n\nPelanggan tidak akan bisa melakukan reservasi online baru hari ini!";
 
         if (!confirm(confirmMsg)) return;
 
@@ -820,7 +820,7 @@
           const verifyData = await verifyRes.json();
           if (!verifyData.success) {
             alert(
-              "âŒ VERIFIKASI GAGAL: Kata sandi Admin yang dimasukkan salah!",
+              "❌ VERIFIKASI GAGAL: Kata sandi Admin yang dimasukkan salah!",
             );
             return;
           }
@@ -853,13 +853,13 @@
 
         if (isOpen) {
           badge.className = "status-badge-custom open";
-          badge.textContent = "ðŸŸ¢ TOKO BUKA";
+          badge.textContent = "🟢 TOKO BUKA";
 
           btnOpen.className = "btn btn-status btn-status-open active";
           btnClose.className = "btn btn-status btn-status-close inactive";
         } else {
           badge.className = "status-badge-custom closed";
-          badge.textContent = "ðŸ”´ TOKO TUTUP";
+          badge.textContent = "🔴 TOKO TUTUP";
 
           btnOpen.className = "btn btn-status btn-status-open inactive";
           btnClose.className = "btn btn-status btn-status-close active";
@@ -869,8 +869,8 @@
       async function toggleShopStatus(isOpen) {
         // Keamanan Ganda: Konfirmasi berlapis
         const confirmMsg = isOpen
-          ? "ðŸ”’ KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MEMBUKA operasional toko?\n\nSistem kasir dan formulir reservasi online pelanggan akan diaktifkan kembali."
-          : "âš ï¸ KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENUTUP operasional toko?\n\nSistem kasir POS billiard & karaoke akan langsung dikunci/dinonaktifkan secara otomatis, dan pelanggan tidak akan bisa melakukan reservasi online baru hari ini!";
+          ? "🔒 KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MEMBUKA operasional toko?\n\nSistem kasir dan formulir reservasi online pelanggan akan diaktifkan kembali."
+          : "⚠️ KONFIRMASI KEAMANAN GANDA:\n\nApakah Anda benar-benar yakin ingin MENUTUP operasional toko?\n\nSistem kasir POS billiard & karaoke akan langsung dikunci/dinonaktifkan secara otomatis, dan pelanggan tidak akan bisa melakukan reservasi online baru hari ini!";
 
         if (!confirm(confirmMsg)) return;
 
@@ -892,7 +892,7 @@
           const verifyData = await verifyRes.json();
           if (!verifyData.success) {
             alert(
-              "âŒ VERIFIKASI GAGAL: Kata sandi Admin yang dimasukkan salah!",
+              "❌ VERIFIKASI GAGAL: Kata sandi Admin yang dimasukkan salah!",
             );
             return;
           }

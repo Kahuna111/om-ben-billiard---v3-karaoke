@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -88,7 +88,7 @@
         <section>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
                 <h2 style="font-family: var(--font-heading); margin: 0;">Monitoring Area</h2>
-                <button class="btn btn-outline" style="width: auto;" onclick="openModal()">âš™ï¸ Pengaturan CCTV</button>
+                <button class="btn btn-outline" style="width: auto;" onclick="openModal()">⚙️ Pengaturan CCTV</button>
             </div>
 
             <!-- DYNAMIC CAMERA GRID -->
@@ -110,10 +110,10 @@
     <div id="cctv-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; justify-content: center; align-items: center;">
         <div class="modal-content" style="border: 1.5px solid var(--primary-color); border-radius: 20px; padding: 2rem; width: 500px; max-width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 30px rgba(0, 243, 255, 0.25);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.8rem;">
-                <h3 style="font-family: var(--font-heading); color: var(--primary-color); font-size: 1.4rem; margin: 0;">âš™ï¸ Pengaturan CCTV</h3>
+                <h3 style="font-family: var(--font-heading); color: var(--primary-color); font-size: 1.4rem; margin: 0;">⚙️ Pengaturan CCTV</h3>
                 <div style="display: flex; align-items: center; gap: 0.8rem;">
                     <button type="button" onclick="addNewCamera()" style="background: rgba(0, 243, 255, 0.15); border: 1.5px solid var(--primary-color); color: var(--primary-glow); border-radius: 8px; padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: all 0.2s;">
-                        âž• Tambah Kamera
+                        ➕ Tambah Kamera
                     </button>
                     <button type="button" onclick="closeModal()" style="background: none; border: none; color: var(--text-dim); font-size: 1.8rem; cursor: pointer; line-height: 1;">&times;</button>
                 </div>
@@ -221,7 +221,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.4rem;">
                         <h4 style="color: var(--accent-gold); font-size: 0.9rem; margin: 0;">Saluran Kamera #${cam.id}</h4>
                         <button type="button" onclick="deleteCamera(${cam.id})" style="background: rgba(231,76,60,0.15); border: 1px solid rgba(231,76,60,0.3); color: #e74c3c; border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: all 0.2s;">
-                            ðŸ—‘ï¸ Hapus
+                            🗑️ Hapus
                         </button>
                     </div>
                     
@@ -277,7 +277,7 @@
             const container = document.getElementById(`feed-container-${id}`);
             if (container) {
                 container.innerHTML = `
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">âš ï¸</div>
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚠️</div>
                     <p style="font-size:0.85rem; font-weight:bold;">Stream Gagal Terhubung</p>
                     <small style="font-size: 0.65rem; opacity: 0.5; padding: 0 1rem; text-align: center; word-break: break-all; margin-top:0.2rem;">${url}</small>
                 `;
@@ -292,12 +292,12 @@
             if (cameras.length === 0) {
                 grid.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; background: var(--card-bg); backdrop-filter: blur(12px); border: 1px dashed var(--glass-border); border-radius: 20px;">
-                        <div style="font-size: 4rem; margin-bottom: 1.5rem;">ðŸ“¹</div>
+                        <div style="font-size: 4rem; margin-bottom: 1.5rem;">📹</div>
                         <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 0.5rem;">Belum ada CCTV Terdaftar</h3>
                         <p style="font-size: 0.9rem; color: var(--text-dim); max-width: 500px; margin: 0 auto 1.5rem;">
                             Klik tombol "Pengaturan CCTV" di atas untuk menambahkan kamera pemantau (USB Webcam lokal maupun IP Camera).
                         </p>
-                        <button class="btn" style="width: auto; padding: 0.5rem 1.5rem;" onclick="openModal()">âž• Tambah Kamera Sekarang</button>
+                        <button class="btn" style="width: auto; padding: 0.5rem 1.5rem;" onclick="openModal()">➕ Tambah Kamera Sekarang</button>
                     </div>
                 `;
                 return;
@@ -313,7 +313,7 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1;">
                             <div class="rec-dot"></div> LIVE - ${cam.name.toUpperCase()}
                         </div>
-                        <button onclick="toggleFullscreen('cam-${cam.id}')" style="background: rgba(255,255,255,0.1); border: none; color: white; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 1rem;">â›¶</button>
+                        <button onclick="toggleFullscreen('cam-${cam.id}')" style="background: rgba(255,255,255,0.1); border: none; color: white; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 1rem;">⛶</button>
                     </div>
                     <div class="cctv-placeholder" id="feed-container-${cam.id}"></div>
                 `;
@@ -334,7 +334,7 @@
                         .catch(err => {
                             console.error("Gagal memuat webcam lokal:", err);
                             container.innerHTML = `
-                                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">âŒ</div>
+                                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">❌</div>
                                 <p style="font-size:0.85rem; font-weight:bold;">Webcam Offline</p>
                                 <small style="font-size: 0.65rem; opacity: 0.5; color: var(--danger); margin-top:0.2rem;">${err.message}</small>
                             `;
@@ -345,7 +345,7 @@
                     `;
                 } else {
                     container.innerHTML = `
-                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">ðŸ“¹</div>
+                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📹</div>
                         <p style="font-size:0.85rem; font-weight:bold;">Kamera Belum Terhubung</p>
                         <small style="font-size: 0.65rem; opacity: 0.5; padding: 0 1rem; text-align: center; margin-top:0.2rem;">Klik tombol "Pengaturan CCTV" di atas untuk menghubungkan saluran ini.</small>
                     `;
