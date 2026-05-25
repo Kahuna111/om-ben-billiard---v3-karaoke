@@ -1087,7 +1087,7 @@ app.put("/api/users/update", (req, res) => {
     if (exists)
       return res.status(400).json({
         success: false,
-        message: "Username sudah digunakan orang lain su!",
+        message: "Username sudah digunakan orang lain!",
       });
 
     user.username = newUsername;
@@ -1382,7 +1382,7 @@ app.post("/api/bookings", (req, res) => {
     return res.status(400).json({
       success: false,
       message:
-        "Maaf su! Toko sedang tutup hari ini. Sistem tidak menerima reservasi online baru saat ini.",
+        "Maaf! Toko sedang tutup hari ini. Sistem tidak menerima reservasi online baru saat ini.",
     });
   }
 
@@ -1394,7 +1394,7 @@ app.post("/api/bookings", (req, res) => {
     return res.status(400).json({
       success: false,
       message:
-        "Maaf su! Layanan booking online sedang ditutup sementara oleh Admin. Sistem tidak menerima reservasi online baru saat ini.",
+        "Maaf! Layanan booking online sedang ditutup sementara oleh Admin. Sistem tidak menerima reservasi online baru saat ini.",
     });
   }
 
@@ -1425,7 +1425,7 @@ app.post("/api/bookings", (req, res) => {
       const unitName = targetType === "room" ? "Ruangan" : "Meja";
       return res.status(400).json({
         success: false,
-        message: `Maaf su! ${unitName} baru saja selesai. Harap tunggu ${minutesRemaining} menit lagi untuk melakukan reservasi.`,
+        message: `Maaf! ${unitName} baru saja selesai. Harap tunggu ${minutesRemaining} menit lagi untuk melakukan reservasi.`,
       });
     }
   }

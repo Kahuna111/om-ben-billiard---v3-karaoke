@@ -555,7 +555,7 @@
         document.getElementById('booking-form').onsubmit = async (e) => {
             e.preventDefault();
             const targetVal = document.getElementById('target-select').value;
-            if (!targetVal) return alert('Pilih meja/ruangan dulu su!');
+            if (!targetVal) return alert('Pilih meja/ruangan dulu!');
 
             const [type, id] = targetVal.split('|');
             const data = {
